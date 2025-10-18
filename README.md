@@ -59,9 +59,9 @@ CyberLureAI/
 
 ## 📚 Datasets Iniciales
 
-| Tipo de amenaza | Dataset recomendado | Fuente |
+| Tipo de amenaza | Dataset | Fuente |
 |-----------------|----------------------|--------|
-| Phishing | [Phishing Websites Dataset](https://www.kaggle.com/datasets/grebby/phishing-website-dataset) | Kaggle |
+| Phishing | [Phishing Websites Dataset](https://www.kaggle.com/datasets/saurabhshahane/classification-of-malwares) | Kaggle |
 | Intrusión de red | [CIC-IDS 2018](https://www.unb.ca/cic/datasets/ids-2018.html) o [UNSW-NB15](https://research.unsw.edu.au/projects/unsw-nb15-dataset) | UNB / UNSW |
 | Malware | [EMBER Dataset](https://www.kaggle.com/datasets/hollylee/malware-analysis-dataset) | Kaggle |
 | DNS malicioso | [CTU-Malware DNS Dataset](https://www.stratosphereips.org/datasets-malware) | Stratosphere IPS |
