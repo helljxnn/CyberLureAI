@@ -1,0 +1,10 @@
+📂 Dataset: Phishing URLs Dataset
+🌐 Fuente: https://www.kaggle.com/datasets/shashwatwork/phishing-dataset-for-machine-learning
+📅 Sprint: 3 y 4
+🎯 Objetivo:
+Dataset adicional enfocado en detección de URLs maliciosas y phishing.
+Permite expandir el modelo hacia detección de fraudes por web.
+
+📌 Instrucciones:
+- Descargar con: kaggle datasets download -d shashwatwork/phishing-dataset-for-machine-learning
+- Guardar en /data/phishing_urls/

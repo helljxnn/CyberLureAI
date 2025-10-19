@@ -1,0 +1,10 @@
+📂 Dataset: Spam Email Detection
+🌐 Fuente: https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset
+📅 Sprint: 4
+🎯 Objetivo:
+Dataset orientado a la detección de spam o correos electrónicos maliciosos.
+Ideal para probar la integración del modelo con ejemplos reales de texto.
+
+📌 Instrucciones:
+- Descargar con: kaggle datasets download -d uciml/sms-spam-collection-dataset
+- Guardar en /data/email_spam/
