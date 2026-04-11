@@ -26,8 +26,6 @@ The first recommended MVP focuses on:
 - clear risk scoring
 - simple recommendations for end users
 
-More context is documented in [docs/PRODUCT_VISION.md](docs/PRODUCT_VISION.md).
-
 ## Current Repository Structure
 
 ```text
