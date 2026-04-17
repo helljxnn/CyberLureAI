@@ -17,6 +17,7 @@ First implementation target:
 ## Current structure
 
 - `app/main.py` contains the FastAPI entry point
+- `app/routers/` contains API routes
 - `app/schemas/` contains request and response models
 - `app/services/` contains lightweight analysis logic
 
