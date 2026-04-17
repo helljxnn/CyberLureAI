@@ -1,8 +1,12 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class URLAnalysisRequest(BaseModel):
-    url: HttpUrl
+    url: HttpUrl = Field(
+        ...,
+        examples=["http://secure-login-example.com/verify"],
+        description="URL to analyze for phishing indicators.",
+    )
 
 
 class URLAnalysisResponse(BaseModel):
