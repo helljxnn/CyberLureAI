@@ -31,10 +31,15 @@ uvicorn backend.app.main:app --reload
 
 Then open:
 
+- `http://127.0.0.1:8000/`
 - `http://127.0.0.1:8000/health`
 - `http://127.0.0.1:8000/docs`
 
 ## Current endpoint
+
+### `GET /`
+
+Returns a simple API summary with version and available endpoints.
 
 ### `GET /health`
 
@@ -80,6 +85,12 @@ Example response:
 ### `POST /analyze/message`
 
 Accepts a suspicious message and returns an initial heuristic-based analysis.
+
+Validation notes:
+
+- leading and trailing spaces are removed before analysis
+- blank messages are rejected
+- the message must contain at least 5 meaningful characters
 
 Request body:
 
