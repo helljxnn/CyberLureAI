@@ -14,6 +14,7 @@ def test_root_endpoint_returns_api_summary() -> None:
         "name": "CyberLureAI API",
         "version": "0.1.0",
         "status": "running",
+        "environment": "development",
         "docs_url": "/docs",
         "available_endpoints": [
             "/health",
