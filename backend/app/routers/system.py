@@ -1,15 +1,19 @@
 from fastapi import APIRouter
 
+from backend.app.core.settings import get_settings
+
 
 router = APIRouter(tags=["system"])
 
 
 @router.get("/")
 def root() -> dict[str, object]:
+    settings = get_settings()
     return {
-        "name": "CyberLureAI API",
-        "version": "0.1.0",
+        "name": settings.api_title,
+        "version": settings.app_version,
         "status": "running",
+        "environment": settings.app_env,
         "docs_url": "/docs",
         "available_endpoints": [
             "/health",
@@ -21,7 +25,8 @@ def root() -> dict[str, object]:
 
 @router.get("/health")
 def health_check() -> dict[str, str]:
+    settings = get_settings()
     return {
         "status": "ok",
-        "service": "CyberLureAI API",
+        "service": settings.api_title,
     }

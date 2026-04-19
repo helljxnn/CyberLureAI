@@ -16,10 +16,19 @@ First implementation target:
 
 ## Current structure
 
+- `app/core/` contains shared configuration helpers
 - `app/main.py` contains the FastAPI entry point
 - `app/routers/` contains API routes
 - `app/schemas/` contains request and response models
 - `app/services/` contains lightweight analysis logic
+
+## Settings
+
+The backend now reads configuration from environment variables through:
+
+- `app/core/settings.py`
+
+Defaults come from `.env.example`, and local values can be placed in `.env`.
 
 ## Run locally
 
