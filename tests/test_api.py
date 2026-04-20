@@ -78,6 +78,8 @@ def test_url_analysis_endpoint_rejects_invalid_url() -> None:
     )
 
     assert response.status_code == 422
+    assert response.json()["error"] == "validation_error"
+    assert response.json()["details"][0]["field"] == "url"
 
 
 def test_message_analysis_endpoint_rejects_blank_message() -> None:
@@ -87,6 +89,9 @@ def test_message_analysis_endpoint_rejects_blank_message() -> None:
     )
 
     assert response.status_code == 422
+    assert response.json()["error"] == "validation_error"
+    assert response.json()["details"][0]["field"] == "message"
+    assert "non-space characters" in response.json()["details"][0]["message"]
 
 
 def test_message_analysis_endpoint_trims_whitespace() -> None:

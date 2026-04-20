@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from backend.app.core.error_handlers import register_error_handlers
 from backend.app.core.settings import get_settings
 from backend.app.routers.analysis import router as analysis_router
 from backend.app.routers.system import router as system_router
@@ -13,5 +14,6 @@ app = FastAPI(
     debug=settings.debug,
 )
 
+register_error_handlers(app)
 app.include_router(system_router)
 app.include_router(analysis_router)
