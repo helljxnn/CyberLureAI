@@ -127,3 +127,20 @@ Example response:
   ]
 }
 ```
+
+## Validation errors
+
+When input data is invalid, the API returns a friendlier `422` response:
+
+```json
+{
+  "error": "validation_error",
+  "message": "The request contains invalid or missing data.",
+  "details": [
+    {
+      "field": "message",
+      "message": "Message must contain at least 5 non-space characters."
+    }
+  ]
+}
+```
