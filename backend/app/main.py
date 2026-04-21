@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.core.error_handlers import register_error_handlers
 from backend.app.core.settings import get_settings
@@ -12,6 +13,14 @@ app = FastAPI(
     version=settings.app_version,
     description="Initial backend API for CyberLureAI.",
     debug=settings.debug,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"] if settings.debug else [settings.frontend_url],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 register_error_handlers(app)

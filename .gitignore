@@ -1,5 +1,6 @@
 .venv/
 .personal/
+node_modules/
 venv/
 env/
 ENV/
