@@ -17,6 +17,7 @@ def analyze_url(url: str) -> URLAnalysisResponse:
     lowered_url = url.lower()
     reasons: list[str] = []
     risk_score = 5
+    keyword_hits = [keyword for keyword in SUSPICIOUS_KEYWORDS if keyword in lowered_url]
 
     if "@" in lowered_url:
         risk_score += 30
@@ -26,9 +27,13 @@ def analyze_url(url: str) -> URLAnalysisResponse:
         risk_score += 15
         reasons.append("The URL uses multiple hyphens, a common phishing pattern.")
 
-    if any(keyword in lowered_url for keyword in SUSPICIOUS_KEYWORDS):
+    if keyword_hits:
         risk_score += 25
         reasons.append("The URL contains keywords commonly used in phishing attempts.")
+
+    if len(keyword_hits) >= 3:
+        risk_score += 20
+        reasons.append("The URL combines multiple phishing-related keywords in the same address.")
 
     if lowered_url.count(".") >= 3:
         risk_score += 15
@@ -37,6 +42,10 @@ def analyze_url(url: str) -> URLAnalysisResponse:
     if lowered_url.startswith("http://"):
         risk_score += 10
         reasons.append("The URL does not use HTTPS.")
+
+    if lowered_url.startswith("http://") and len(keyword_hits) >= 2:
+        risk_score += 10
+        reasons.append("The URL mixes an insecure protocol with several suspicious phishing terms.")
 
     risk_score = min(risk_score, 100)
 

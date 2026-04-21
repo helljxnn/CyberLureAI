@@ -126,6 +126,12 @@ h1 {
   gap: 12px;
 }
 
+.example-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .field-label {
   font-size: 0.92rem;
   font-weight: 600;
@@ -156,7 +162,8 @@ h1 {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.ghost-button {
   border: 0;
   border-radius: 999px;
   font: inherit;
@@ -177,8 +184,16 @@ h1 {
   background: var(--teal);
 }
 
+.ghost-button {
+  padding: 8px 12px;
+  background: rgba(35, 23, 13, 0.05);
+  color: var(--muted);
+  border: 1px solid rgba(35, 23, 13, 0.08);
+}
+
 .primary-button:hover,
-.secondary-button:hover {
+.secondary-button:hover,
+.ghost-button:hover {
   transform: translateY(-1px);
   opacity: 0.95;
 }

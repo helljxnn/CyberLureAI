@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field, field_validator
 class MessageAnalysisRequest(BaseModel):
     message: str = Field(
         ...,
-        min_length=5,
         max_length=5000,
         examples=["Urgent: verify your bank account now by clicking https://fake-bank-alert.example"],
         description="Message text to analyze for scam or phishing patterns.",

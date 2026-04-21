@@ -1,6 +1,26 @@
 import { useMemo, useState } from "react";
 
 const DEFAULT_API_URL = "http://127.0.0.1:8000";
+const URL_EXAMPLES = [
+  {
+    label: "Safe example",
+    value: "https://www.openai.com",
+  },
+  {
+    label: "Suspicious example",
+    value: "http://secure-login-bank-verify.example.com",
+  },
+];
+const MESSAGE_EXAMPLES = [
+  {
+    label: "Safe example",
+    value: "Hi, just checking in to confirm our meeting tomorrow.",
+  },
+  {
+    label: "Suspicious example",
+    value: "Urgent: verify your bank account now by clicking https://fake-bank-alert.example",
+  },
+];
 
 function parseAppError(error) {
   try {
@@ -220,6 +240,18 @@ export default function App() {
               onChange={(event) => setUrlInput(event.target.value)}
               required
             />
+            <div className="example-row">
+              {URL_EXAMPLES.map((example) => (
+                <button
+                  key={example.label}
+                  className="ghost-button"
+                  type="button"
+                  onClick={() => setUrlInput(example.value)}
+                >
+                  {example.label}
+                </button>
+              ))}
+            </div>
             <button className="primary-button" type="submit">
               Analyze URL
             </button>
@@ -247,6 +279,18 @@ export default function App() {
               onChange={(event) => setMessageInput(event.target.value)}
               required
             />
+            <div className="example-row">
+              {MESSAGE_EXAMPLES.map((example) => (
+                <button
+                  key={example.label}
+                  className="ghost-button"
+                  type="button"
+                  onClick={() => setMessageInput(example.value)}
+                >
+                  {example.label}
+                </button>
+              ))}
+            </div>
             <button className="primary-button" type="submit">
               Analyze message
             </button>
