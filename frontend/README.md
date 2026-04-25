@@ -22,34 +22,40 @@ It connects directly to the backend API endpoints.
 
 ## How to test manually
 
-1. Install frontend dependencies:
+1. Activate the conda backend environment from the project root:
+
+```bash
+conda activate cyberlureai
+```
+
+2. Install frontend dependencies:
 
 ```bash
 cd frontend
 npm install
 ```
 
-2. Run the backend API:
+3. Run the backend API from the project root:
 
 ```bash
 uvicorn backend.app.main:app --reload
 ```
 
-3. Start the frontend:
+4. Start the frontend:
 
 ```bash
 npm run dev
 ```
 
-4. Open the local Vite URL shown in the terminal.
+5. Open the local Vite URL shown in the terminal.
 
-5. Confirm the backend URL is set to:
+6. Confirm the backend URL is set to:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-6. Test:
+7. Test:
 
 - API connection
 - URL analysis

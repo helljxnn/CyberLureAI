@@ -5,9 +5,9 @@ from backend.app.services.url_analyzer import analyze_url
 def test_url_analyzer_flags_high_risk_patterns() -> None:
     result = analyze_url("http://secure-login-bank-verify.example.com")
 
-    assert result.risk_level in {"medium", "high"}
-    assert result.verdict in {"review", "suspicious"}
-    assert result.risk_score >= 40
+    assert result.risk_level == "high"
+    assert result.verdict == "suspicious"
+    assert result.risk_score >= 70
     assert len(result.reasons) >= 2
 
 

@@ -50,7 +50,9 @@ At this stage, the repository contains:
 - one exploratory notebook
 - research notes
 - product vision documentation
-- a cleaned base structure for future backend and frontend work
+- a FastAPI backend with URL and message analysis endpoints
+- a React + Vite frontend for testing the first analysis flow
+- automated tests for the current API and analysis services
 
 ## Tech Stack
 
@@ -81,12 +83,11 @@ Examples already referenced by the project:
 
 ## Setup
 
-Create and activate a virtual environment, then install the dependencies:
+Create or update the conda environment, then activate it:
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+conda env update -f environment.yml
+conda activate cyberlureai
 ```
 
 Copy the environment template if needed:
@@ -95,12 +96,18 @@ Copy the environment template if needed:
 copy .env.example .env
 ```
 
+Run the backend tests from the project root:
+
+```bash
+python -m pytest
+```
+
 ## Immediate Next Steps
 
-1. Organize the first sprint.
-2. Scaffold the backend API.
-3. Scaffold the frontend interface.
-4. Build the first phishing or message-analysis flow.
+1. Keep the URL and message analysis MVP stable and easy to demo.
+2. Tune the heuristic scores with more realistic phishing examples.
+3. Prepare Sprint 02 around phishing URL feature extraction and a first baseline model.
+4. Keep documentation aligned with the API response contract.
 
 ## Legal and Ethical Note
 

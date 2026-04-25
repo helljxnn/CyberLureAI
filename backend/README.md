@@ -69,7 +69,7 @@ Request body:
 
 ```json
 {
-  "url": "http://secure-login-example.com/verify"
+  "url": "http://secure-login-bank-verify.example.com"
 }
 ```
 
@@ -77,16 +77,18 @@ Example response:
 
 ```json
 {
-  "url": "http://secure-login-example.com/verify",
-  "risk_level": "medium",
-  "risk_score": 55,
-  "verdict": "review",
-  "explanation": "This initial analysis marked the URL as medium risk based on simple phishing heuristics.",
-  "recommended_action": "Verify the sender and inspect the domain carefully before continuing.",
+  "url": "http://secure-login-bank-verify.example.com/",
+  "risk_level": "high",
+  "risk_score": 85,
+  "verdict": "suspicious",
+  "explanation": "This initial analysis marked the URL as high risk based on simple phishing heuristics.",
+  "recommended_action": "Do not open the link or enter personal information.",
   "reasons": [
     "The URL uses multiple hyphens, a common phishing pattern.",
     "The URL contains keywords commonly used in phishing attempts.",
-    "The URL does not use HTTPS."
+    "The URL combines multiple phishing-related keywords in the same address.",
+    "The URL does not use HTTPS.",
+    "The URL mixes an insecure protocol with several suspicious phishing terms."
   ]
 }
 ```
