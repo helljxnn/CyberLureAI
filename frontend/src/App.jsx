@@ -21,6 +21,39 @@ const MESSAGE_EXAMPLES = [
     value: "Urgent: verify your bank account now by clicking https://fake-bank-alert.example",
   },
 ];
+const RISK_METADATA = {
+  low: {
+    label: "Low risk",
+    summary: "No strong indicators were found in this first-pass review.",
+  },
+  medium: {
+    label: "Medium risk",
+    summary: "Some indicators deserve a careful manual check before continuing.",
+  },
+  high: {
+    label: "High risk",
+    summary: "Multiple indicators suggest this content should be treated as suspicious.",
+  },
+};
+const VERDICT_LABELS = {
+  likely_safe: "Likely safe",
+  review: "Needs review",
+  suspicious: "Suspicious",
+};
+
+function getRiskMetadata(riskLevel) {
+  return (
+    RISK_METADATA[riskLevel] || {
+      label: "Unknown risk",
+      summary: "The backend returned a risk level the interface does not recognize yet.",
+    }
+  );
+}
+
+function formatVerdict(verdict) {
+  const value = String(verdict || "unknown");
+  return VERDICT_LABELS[value] || value.replaceAll("_", " ");
+}
 
 function parseAppError(error) {
   try {
@@ -61,16 +94,24 @@ async function fetchJson(baseUrl, path, options = {}) {
 
 function ResultPanel({ title, state }) {
   if (state.kind === "empty") {
-    return <div className="result-panel empty-state">{state.message}</div>;
+    return (
+      <div className="result-panel empty-state" aria-live="polite">
+        {state.message}
+      </div>
+    );
   }
 
   if (state.kind === "loading") {
-    return <div className="result-panel">{state.message}</div>;
+    return (
+      <div className="result-panel loading-state" aria-live="polite">
+        {state.message}
+      </div>
+    );
   }
 
   if (state.kind === "error") {
     return (
-      <div className="result-panel">
+      <div className="result-panel result-error" aria-live="polite">
         <div className="result-meta">
           <span className="pill pill-risk-high">Error</span>
         </div>
@@ -88,13 +129,25 @@ function ResultPanel({ title, state }) {
   }
 
   const riskClass = `pill-risk-${state.data.risk_level}`;
+  const risk = getRiskMetadata(state.data.risk_level);
+  const score = Math.min(100, Math.max(0, Number(state.data.risk_score) || 0));
 
   return (
-    <div className="result-panel">
+    <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
+      <div className="result-score-row">
+        <div>
+          <p className="result-label">Risk summary</p>
+          <h3>{risk.label}</h3>
+        </div>
+        <span className={`score-badge ${riskClass}`}>{score}/100</span>
+      </div>
+      <div className="score-track" aria-label={`Risk score ${score} out of 100`}>
+        <span style={{ width: `${score}%` }} />
+      </div>
+      <p className="result-summary">{risk.summary}</p>
       <div className="result-meta">
-        <span className={`pill ${riskClass}`}>Risk: {state.data.risk_level}</span>
-        <span className={`pill ${riskClass}`}>Score: {state.data.risk_score}</span>
-        <span className={`pill ${riskClass}`}>Verdict: {state.data.verdict}</span>
+        <span className={`pill ${riskClass}`}>Risk: {risk.label}</span>
+        <span className={`pill ${riskClass}`}>Verdict: {formatVerdict(state.data.verdict)}</span>
       </div>
       <h3>Explanation</h3>
       <p>{state.data.explanation}</p>
@@ -128,6 +181,10 @@ export default function App() {
   });
 
   const cleanBaseUrl = useMemo(() => apiBaseUrl.trim().replace(/\/+$/, ""), [apiBaseUrl]);
+  const isUrlLoading = urlResult.kind === "loading";
+  const isMessageLoading = messageResult.kind === "loading";
+  const canAnalyzeUrl = urlInput.trim().length > 0 && !isUrlLoading;
+  const canAnalyzeMessage = messageInput.trim().length > 0 && !isMessageLoading;
 
   async function checkConnection() {
     setConnectionState({ tone: "neutral", message: "Checking backend..." });
@@ -252,8 +309,8 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <button className="primary-button" type="submit">
-              Analyze URL
+            <button className="primary-button" type="submit" disabled={!canAnalyzeUrl}>
+              {isUrlLoading ? "Analyzing..." : "Analyze URL"}
             </button>
           </form>
 
@@ -291,15 +348,15 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <button className="primary-button" type="submit">
-              Analyze message
+            <button className="primary-button" type="submit" disabled={!canAnalyzeMessage}>
+              {isMessageLoading ? "Analyzing..." : "Analyze message"}
             </button>
           </form>
 
           <ResultPanel title="Message analysis failed" state={messageResult} />
         </section>
 
-        <section className="card learn-card">
+        <section className="learn-section">
           <div className="card-header">
             <p className="section-kicker">What this MVP does</p>
             <h2>How to read the results</h2>
@@ -319,8 +376,8 @@ export default function App() {
               <p>Gives the next safe step a normal user should take.</p>
             </article>
             <article className="tip-item">
-              <h3>Tomorrow&apos;s review focus</h3>
-              <p>Check if the scores feel too aggressive, too weak, or just right.</p>
+              <h3>Next sprint focus</h3>
+              <p>Compare the current scores against more phishing examples before adding a model.</p>
             </article>
           </div>
         </section>

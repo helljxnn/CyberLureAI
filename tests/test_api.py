@@ -37,18 +37,19 @@ def test_health_endpoint_returns_ok() -> None:
 def test_url_analysis_endpoint_returns_expected_shape() -> None:
     response = client.post(
         "/analyze/url",
-        json={"url": "http://secure-login-example.com/verify"},
+        json={"url": "http://secure-login-bank-verify.example.com"},
     )
 
     body = response.json()
 
     assert response.status_code == 200
-    assert body["url"] == "http://secure-login-example.com/verify"
-    assert body["risk_level"] in {"low", "medium", "high"}
-    assert isinstance(body["risk_score"], int)
+    assert body["url"] == "http://secure-login-bank-verify.example.com/"
+    assert body["risk_level"] == "high"
+    assert body["verdict"] == "suspicious"
+    assert body["risk_score"] >= 70
     assert "recommended_action" in body
     assert isinstance(body["reasons"], list)
-    assert len(body["reasons"]) >= 1
+    assert len(body["reasons"]) >= 2
 
 
 def test_message_analysis_endpoint_flags_suspicious_content() -> None:
