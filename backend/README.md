@@ -21,6 +21,7 @@ First implementation target:
 - `app/routers/` contains API routes
 - `app/schemas/` contains request and response models
 - `app/services/` contains lightweight analysis logic
+- `app/services/features/` contains reusable URL and message signal extraction
 
 ## Settings
 
@@ -79,6 +80,8 @@ Responses include:
 
 - `reasons` for user-friendly explanations
 - `signals` for structured detection details such as `code`, `severity`, `score`, and `description`
+
+The analyzer calculates risk by combining the base score with the structured signal scores. This keeps the current heuristic MVP explainable while preparing the project for later feature extraction and baseline model work.
 
 Request body:
 

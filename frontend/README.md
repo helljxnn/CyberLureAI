@@ -19,6 +19,7 @@ The frontend now uses a lightweight React + Vite setup:
 - `src/styles.css`
 
 It connects directly to the backend API endpoints.
+Successful URL and message checks are also stored in a small local browser history so recent results can be compared during manual testing.
 
 ## How to test manually
 
@@ -60,6 +61,7 @@ http://127.0.0.1:8000
 - API connection
 - URL analysis
 - message analysis
+- local analysis history
 
 ## Notes
 

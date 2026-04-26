@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 
 const DEFAULT_API_URL = "http://127.0.0.1:8000";
+const HISTORY_KEY = "cyberlureai.analysisHistory";
+const HISTORY_LIMIT = 6;
 const URL_EXAMPLES = [
   {
     label: "Safe example",
@@ -55,6 +57,44 @@ const VERDICT_LABELS = {
   review: "Needs review",
   suspicious: "Suspicious",
 };
+
+function loadAnalysisHistory() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const storedHistory = window.localStorage.getItem(HISTORY_KEY);
+    const parsedHistory = JSON.parse(storedHistory || "[]");
+    return Array.isArray(parsedHistory) ? parsedHistory.slice(0, HISTORY_LIMIT) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAnalysisHistory(history) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    // Local storage can be unavailable in private or restricted browser contexts.
+  }
+}
+
+function createHistoryEntry(kind, input, data) {
+  return {
+    id: `${Date.now()}-${kind}`,
+    kind,
+    input,
+    risk_level: data.risk_level,
+    risk_score: data.risk_score,
+    verdict: data.verdict,
+    created_at: new Date().toLocaleString(),
+  };
+}
 
 function getRiskMetadata(riskLevel) {
   return (
@@ -199,6 +239,7 @@ function ResultPanel({ title, state }) {
 
 export default function App() {
   const [apiBaseUrl, setApiBaseUrl] = useState(DEFAULT_API_URL);
+  const [analysisHistory, setAnalysisHistory] = useState(loadAnalysisHistory);
   const [connectionState, setConnectionState] = useState({
     tone: "neutral",
     message: "Use this before testing the analysis forms.",
@@ -219,6 +260,20 @@ export default function App() {
   const isMessageLoading = messageResult.kind === "loading";
   const canAnalyzeUrl = urlInput.trim().length > 0 && !isUrlLoading;
   const canAnalyzeMessage = messageInput.trim().length > 0 && !isMessageLoading;
+
+  function addHistoryEntry(kind, input, data) {
+    const entry = createHistoryEntry(kind, input, data);
+    setAnalysisHistory((currentHistory) => {
+      const nextHistory = [entry, ...currentHistory].slice(0, HISTORY_LIMIT);
+      saveAnalysisHistory(nextHistory);
+      return nextHistory;
+    });
+  }
+
+  function clearHistory() {
+    saveAnalysisHistory([]);
+    setAnalysisHistory([]);
+  }
 
   async function checkConnection() {
     setConnectionState({ tone: "neutral", message: "Checking backend..." });
@@ -247,6 +302,7 @@ export default function App() {
         body: JSON.stringify({ url: urlInput }),
       });
       setUrlResult({ kind: "success", data });
+      addHistoryEntry("URL", urlInput.trim(), data);
     } catch (error) {
       const parsed = parseAppError(error);
       setUrlResult({
@@ -267,6 +323,7 @@ export default function App() {
         body: JSON.stringify({ message: messageInput }),
       });
       setMessageResult({ kind: "success", data });
+      addHistoryEntry("Message", messageInput.trim(), data);
     } catch (error) {
       const parsed = parseAppError(error);
       setMessageResult({
@@ -414,6 +471,48 @@ export default function App() {
               <p>Compare the current scores against more phishing examples before adding a model.</p>
             </article>
           </div>
+        </section>
+
+        <section className="history-section">
+          <div className="history-header">
+            <div>
+              <p className="section-kicker">Recent checks</p>
+              <h2>Analysis history</h2>
+            </div>
+            <button
+              className="ghost-button"
+              type="button"
+              onClick={clearHistory}
+              disabled={analysisHistory.length === 0}
+            >
+              Clear history
+            </button>
+          </div>
+
+          {analysisHistory.length === 0 ? (
+            <p className="history-empty">Successful analyses will appear here for quick comparison.</p>
+          ) : (
+            <div className="history-list">
+              {analysisHistory.map((item) => {
+                const itemRisk = getRiskMetadata(item.risk_level);
+                const itemRiskClass = `pill-risk-${item.risk_level}`;
+
+                return (
+                  <article className="history-item" data-risk={item.risk_level} key={item.id}>
+                    <div>
+                      <span className="history-kind">{item.kind}</span>
+                      <h3>
+                        {itemRisk.label} | {item.risk_score}/100
+                      </h3>
+                      <p>{item.input}</p>
+                      <span className="history-time">{item.created_at}</span>
+                    </div>
+                    <span className={`pill ${itemRiskClass}`}>{formatVerdict(item.verdict)}</span>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </section>
       </main>
     </div>

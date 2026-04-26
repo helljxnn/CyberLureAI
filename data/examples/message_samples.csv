@@ -1,0 +1,7 @@
+sample_id,input,expected_verdict,expected_signal
+safe_meeting,"Hi, just checking in to confirm our meeting tomorrow.",likely_safe,no_strong_indicators
+safe_delivery,"Your package is scheduled for delivery tomorrow afternoon.",likely_safe,no_strong_indicators
+review_limited_time_link,"Limited time update: review the new policy at https://example.com",review,contains_link
+suspicious_short_link_threat,"Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",suspicious,shortened_link
+suspicious_reward_lure,"Winner! Claim your gift now at www.fake-prize.example with code 123456",suspicious,reward_lure
+suspicious_sensitive_code,"Urgent!!! Verify your account now using this code: 123456",suspicious,sensitive_information_request
