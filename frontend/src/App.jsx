@@ -10,6 +10,10 @@ const URL_EXAMPLES = [
     label: "Suspicious example",
     value: "http://secure-login-bank-verify.example.com",
   },
+  {
+    label: "Short link example",
+    value: "https://bit.ly/account-update",
+  },
 ];
 const MESSAGE_EXAMPLES = [
   {
@@ -20,19 +24,30 @@ const MESSAGE_EXAMPLES = [
     label: "Suspicious example",
     value: "Urgent: verify your bank account now by clicking https://fake-bank-alert.example",
   },
+  {
+    label: "Threat example",
+    value:
+      "Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",
+  },
 ];
 const RISK_METADATA = {
   low: {
     label: "Low risk",
     summary: "No strong indicators were found in this first-pass review.",
+    insight:
+      "This does not guarantee safety, but it means the current rules did not find strong warning signs.",
   },
   medium: {
     label: "Medium risk",
     summary: "Some indicators deserve a careful manual check before continuing.",
+    insight:
+      "Pause before clicking or replying, especially if the sender is unexpected or asks for personal data.",
   },
   high: {
     label: "High risk",
     summary: "Multiple indicators suggest this content should be treated as suspicious.",
+    insight:
+      "Treat this as unsafe until verified through a trusted channel outside the message or link.",
   },
 };
 const VERDICT_LABELS = {
@@ -46,6 +61,7 @@ function getRiskMetadata(riskLevel) {
     RISK_METADATA[riskLevel] || {
       label: "Unknown risk",
       summary: "The backend returned a risk level the interface does not recognize yet.",
+      insight: "Review the detailed reasons and verify the source before taking action.",
     }
   );
 }
@@ -131,6 +147,7 @@ function ResultPanel({ title, state }) {
   const riskClass = `pill-risk-${state.data.risk_level}`;
   const risk = getRiskMetadata(state.data.risk_level);
   const score = Math.min(100, Math.max(0, Number(state.data.risk_score) || 0));
+  const signals = Array.isArray(state.data.signals) ? state.data.signals : [];
 
   return (
     <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
@@ -151,8 +168,25 @@ function ResultPanel({ title, state }) {
       </div>
       <h3>Explanation</h3>
       <p>{state.data.explanation}</p>
+      <h3>Why it matters</h3>
+      <p>{risk.insight}</p>
       <h3>Recommended action</h3>
       <p>{state.data.recommended_action}</p>
+      {signals.length > 0 && (
+        <>
+          <h3>Detected signals</h3>
+          <div className="signal-list">
+            {signals.map((signal) => (
+              <article className="signal-item" key={signal.code}>
+                <span className="signal-code">{signal.code.replaceAll("_", " ")}</span>
+                <span className="signal-meta">
+                  {signal.severity} | +{signal.score}
+                </span>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
       <h3>Reasons</h3>
       <ul>
         {state.data.reasons.map((reason) => (

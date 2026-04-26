@@ -50,6 +50,24 @@ def test_url_analysis_endpoint_returns_expected_shape() -> None:
     assert "recommended_action" in body
     assert isinstance(body["reasons"], list)
     assert len(body["reasons"]) >= 2
+    assert isinstance(body["signals"], list)
+    assert len(body["signals"]) == len(body["reasons"])
+    assert {"code", "severity", "score", "description"} <= set(body["signals"][0])
+
+
+def test_url_analysis_endpoint_flags_ip_address_destination() -> None:
+    response = client.post(
+        "/analyze/url",
+        json={"url": "http://192.168.0.10/secure-login"},
+    )
+
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["risk_level"] == "high"
+    assert body["verdict"] == "suspicious"
+    assert any("IP address" in reason for reason in body["reasons"])
+    assert any(signal["code"] == "ip_address_destination" for signal in body["signals"])
 
 
 def test_message_analysis_endpoint_flags_suspicious_content() -> None:
@@ -70,6 +88,26 @@ def test_message_analysis_endpoint_flags_suspicious_content() -> None:
     assert body["verdict"] in {"review", "suspicious"}
     assert isinstance(body["risk_score"], int)
     assert len(body["reasons"]) >= 1
+
+
+def test_message_analysis_endpoint_flags_shortened_link_threat() -> None:
+    response = client.post(
+        "/analyze/message",
+        json={
+            "message": (
+                "Security alert: your account will be locked today. "
+                "Verify now at https://bit.ly/secure-login"
+            )
+        },
+    )
+
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["risk_level"] == "high"
+    assert body["verdict"] == "suspicious"
+    assert any("shortened link" in reason.lower() for reason in body["reasons"])
+    assert any(signal["code"] == "shortened_link" for signal in body["signals"])
 
 
 def test_url_analysis_endpoint_rejects_invalid_url() -> None:
