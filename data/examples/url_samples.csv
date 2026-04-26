@@ -1,0 +1,7 @@
+sample_id,input,expected_verdict,expected_signal
+safe_openai,https://www.openai.com,likely_safe,no_strong_indicators
+safe_python_docs,https://docs.python.org/3/,likely_safe,no_strong_indicators
+review_shortener,https://bit.ly/account-update,review,link_shortener
+suspicious_ip_destination,http://192.168.0.10/secure-login,suspicious,ip_address_destination
+suspicious_brand_impersonation,https://paypal-secure-check.example.com/login,suspicious,brand_impersonation
+suspicious_hidden_destination,http://example.com@secure-login-bank.example.net,suspicious,hidden_destination_marker

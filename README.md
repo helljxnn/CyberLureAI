@@ -52,6 +52,8 @@ At this stage, the repository contains:
 - product vision documentation
 - a FastAPI backend with URL and message analysis endpoints
 - a React + Vite frontend for testing the first analysis flow
+- structured feature extraction for URL and message risk signals
+- small labeled calibration examples for phishing and message analysis
 - automated tests for the current API and analysis services
 
 ## Tech Stack
@@ -64,8 +66,8 @@ At this stage, the repository contains:
 - matplotlib
 - seaborn
 - JupyterLab
-
-Frontend technology will be defined during the first implementation sprint.
+- React
+- Vite
 
 ## Datasets
 
@@ -73,6 +75,8 @@ Current and planned datasets are documented in:
 
 - [data/readme_datasets.txt](data/readme_datasets.txt)
 - [data/README.md](data/README.md)
+- [data/examples/url_samples.csv](data/examples/url_samples.csv)
+- [data/examples/message_samples.csv](data/examples/message_samples.csv)
 
 Examples already referenced by the project:
 
@@ -104,10 +108,10 @@ python -m pytest
 
 ## Immediate Next Steps
 
-1. Keep the URL and message analysis MVP stable and easy to demo.
-2. Tune the heuristic scores with more realistic phishing examples.
-3. Prepare Sprint 02 around phishing URL feature extraction and a first baseline model.
-4. Keep documentation aligned with the API response contract.
+1. Expand the labeled calibration examples with more realistic safe, review, and suspicious cases.
+2. Start a baseline phishing classifier using the existing structured signals as features.
+3. Track false positives and false negatives from the calibration examples.
+4. Keep the frontend history and API response contract aligned as new signals are added.
 
 ## Legal and Ethical Note
 
