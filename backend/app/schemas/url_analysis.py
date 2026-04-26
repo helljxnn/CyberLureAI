@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field, HttpUrl
 
+from backend.app.schemas.analysis_signal import AnalysisSignal
+
 
 class URLAnalysisRequest(BaseModel):
     url: HttpUrl = Field(
@@ -17,3 +19,4 @@ class URLAnalysisResponse(BaseModel):
     explanation: str
     recommended_action: str
     reasons: list[str]
+    signals: list[AnalysisSignal] = Field(default_factory=list)

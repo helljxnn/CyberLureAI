@@ -65,6 +65,21 @@ Returns a small health response for the API:
 
 Accepts a URL and returns an initial heuristic-based analysis.
 
+Current URL signals include:
+
+- phishing-related keywords
+- insecure HTTP links
+- link shorteners
+- IP-address destinations
+- excessive subdomains
+- brand names combined with untrusted domains
+- patterns such as `@` and repeated hyphens
+
+Responses include:
+
+- `reasons` for user-friendly explanations
+- `signals` for structured detection details such as `code`, `severity`, `score`, and `description`
+
 Request body:
 
 ```json
@@ -89,6 +104,20 @@ Example response:
     "The URL combines multiple phishing-related keywords in the same address.",
     "The URL does not use HTTPS.",
     "The URL mixes an insecure protocol with several suspicious phishing terms."
+  ],
+  "signals": [
+    {
+      "code": "repeated_hyphens",
+      "severity": "medium",
+      "score": 15,
+      "description": "The URL uses multiple hyphens, a common phishing pattern."
+    },
+    {
+      "code": "phishing_keywords",
+      "severity": "medium",
+      "score": 25,
+      "description": "The URL contains keywords commonly used in phishing attempts."
+    }
   ]
 }
 ```
@@ -96,6 +125,21 @@ Example response:
 ### `POST /analyze/message`
 
 Accepts a suspicious message and returns an initial heuristic-based analysis.
+
+Current message signals include:
+
+- scam and phishing phrases
+- links and shortened links
+- urgency or pressure language
+- sensitive information requests
+- account restriction threats
+- reward or prize language
+- code-like numbers used with verification language
+
+Responses include:
+
+- `reasons` for user-friendly explanations
+- `signals` for structured detection details such as `code`, `severity`, `score`, and `description`
 
 Validation notes:
 
