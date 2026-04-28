@@ -1,7 +1,16 @@
 sample_id,input,expected_verdict,expected_signal
 safe_openai,https://www.openai.com,likely_safe,no_strong_indicators
 safe_python_docs,https://docs.python.org/3/,likely_safe,no_strong_indicators
+safe_microsoft_support,https://support.microsoft.com/security,likely_safe,no_strong_indicators
+safe_bancolombia_public,https://www.bancolombia.com/personas,likely_safe,no_strong_indicators
+safe_trusted_login_path,https://accounts.google.com/login,likely_safe,phishing_keywords
 review_shortener,https://bit.ly/account-update,review,link_shortener
+review_insecure_account_page,http://example.com/account,review,insecure_http
+review_many_subdomains,https://help.login.example.com/account,review,many_subdomains
+review_repeated_hyphen_update,https://account-update-login.example.com,review,repeated_hyphens
 suspicious_ip_destination,http://192.168.0.10/secure-login,suspicious,ip_address_destination
 suspicious_brand_impersonation,https://paypal-secure-check.example.com/login,suspicious,brand_impersonation
 suspicious_hidden_destination,http://example.com@secure-login-bank.example.net,suspicious,hidden_destination_marker
+suspicious_deep_bank_chain,https://login.bank.account.verify.alert.example.com,suspicious,deep_subdomain_chain
+suspicious_http_brand_terms,http://microsoft-login-update.example.org/secure,suspicious,http_with_phishing_terms
+suspicious_whatsapp_impersonation,https://whatsapp-security-update.example.net/verify,suspicious,brand_impersonation

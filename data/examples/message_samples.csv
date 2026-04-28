@@ -1,7 +1,16 @@
 sample_id,input,expected_verdict,expected_signal
 safe_meeting,"Hi, just checking in to confirm our meeting tomorrow.",likely_safe,no_strong_indicators
 safe_delivery,"Your package is scheduled for delivery tomorrow afternoon.",likely_safe,no_strong_indicators
+safe_invoice_notice,"Your invoice for April is available in the customer portal.",likely_safe,no_strong_indicators
+safe_spanish_meeting,"Hola, confirmo la reunion de manana a las diez.",likely_safe,no_strong_indicators
+safe_agenda_link,"Here is the agenda for tomorrow: https://example.com/agenda",likely_safe,contains_link
 review_limited_time_link,"Limited time update: review the new policy at https://example.com",review,contains_link
+review_verify_delivery,"Please verify the delivery address today at https://delivery-status.example.com",review,sensitive_information_request
+review_event_limited_time,"Limited time: check the event details at https://example.com/register",review,scam_phrase
+review_code_login,"Use code 482913 to finish signing in.",review,code_like_number
 suspicious_short_link_threat,"Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",suspicious,shortened_link
 suspicious_reward_lure,"Winner! Claim your gift now at www.fake-prize.example with code 123456",suspicious,reward_lure
 suspicious_sensitive_code,"Urgent!!! Verify your account now using this code: 123456",suspicious,sensitive_information_request
+suspicious_bank_lockout,"Urgent: your bank account is locked today. Verify now at https://bit.ly/account-help",suspicious,account_restriction_threat
+suspicious_bonus_code,"Winner!!! Claim your bonus now at www.reward-center.example with code 884422",suspicious,reward_lure
+suspicious_password_expiry,"Your password will expire today. Update it immediately at http://security-check.example",suspicious,account_restriction_threat
