@@ -13,13 +13,14 @@ Turn the current heuristic MVP into a more testable analysis foundation.
 - added local frontend history for recent successful analyses
 - added calibration reporting for false positives and false negatives
 - added tabular signal feature rows for baseline model experiments
+- added an experimental scikit-learn baseline classifier
 
 ## Next Development Path
 
 1. Export and inspect the calibration report after each meaningful signal change.
-2. Train a first baseline classifier with scikit-learn.
-3. Compare the model output with the current heuristic score before replacing any behavior.
-4. Keep adding realistic safe, review, and suspicious examples as new gaps appear.
+2. Compare future model changes against the current heuristic score before replacing any behavior.
+3. Keep adding realistic safe, review, and suspicious examples as new gaps appear.
+4. Expand the calibration dataset before trusting model metrics.
 
 ## Guardrails
 
