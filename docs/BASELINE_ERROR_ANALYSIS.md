@@ -92,6 +92,31 @@ Remaining misses:
 | `suspicious_shortener_bank_terms` | `suspicious` | `review` | Shortener plus bank terms still needs more strong suspicious variants. |
 | `review_verify_delivery` | `review` | `suspicious` | Legitimate delivery verification still trends too risky. |
 
+## Unified Vs Separate Models
+
+Current comparison:
+
+```text
+Unified baseline accuracy: 92.5%
+Separate baseline accuracy: 94.0%
+
+Unified per-type accuracy:
+- message: 96.7%
+- url: 89.2%
+
+Separate per-type accuracy:
+- message: 93.3%
+- url: 94.6%
+```
+
+Interpretation:
+
+- A single shared model still over-compresses some URL boundary cases.
+- Splitting URL and message models improves overall performance because URL
+  accuracy rises more than message accuracy falls.
+- `review` remains the hardest class in both strategies, especially when a case
+  includes one moderate signal without stronger threat context.
+
 ## Next Data Priorities
 
 - Add more `review` URLs that contain only a shortener or only moderate visual
@@ -101,3 +126,5 @@ Remaining misses:
   containing account or contact confirmation language.
 - Keep heuristic and baseline results side by side until the dataset is larger
   and model metrics are less sensitive to individual examples.
+- Treat separate URL and message baselines as the stronger experimental default
+  for future comparisons.
