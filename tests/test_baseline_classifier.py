@@ -12,12 +12,13 @@ from backend.app.services.calibration import (
 
 
 def test_baseline_evaluation_compares_model_with_heuristic() -> None:
+    calibration_results = evaluate_default_calibration()
     evaluation = evaluate_baseline_classifier()
 
-    assert evaluation.total == 30
+    assert evaluation.total == len(calibration_results)
     assert evaluation.heuristic_accuracy == 1.0
     assert 0 <= evaluation.baseline_accuracy <= 1
-    assert evaluation.baseline_accuracy >= 0.5
+    assert evaluation.baseline_accuracy >= 0.7
     assert len(evaluation.predictions) == evaluation.total
     assert all(prediction.expected_verdict for prediction in evaluation.predictions)
 
