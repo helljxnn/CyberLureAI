@@ -4,13 +4,28 @@ safe_delivery,"Your package is scheduled for delivery tomorrow afternoon.",likel
 safe_invoice_notice,"Your invoice for April is available in the customer portal.",likely_safe,no_strong_indicators
 safe_spanish_meeting,"Hola, confirmo la reunion de manana a las diez.",likely_safe,no_strong_indicators
 safe_agenda_link,"Here is the agenda for tomorrow: https://example.com/agenda",likely_safe,contains_link
+safe_help_center_link,"Here is the help center article: https://example.com/help-center",likely_safe,contains_link
+safe_training_link,"The security awareness training slides are at https://example.com/training",likely_safe,contains_link
+safe_project_link,"Project notes are available here: https://example.com/project-notes",likely_safe,contains_link
 review_limited_time_link,"Limited time update: review the new policy at https://example.com",review,contains_link
 review_verify_delivery,"Please verify the delivery address today at https://delivery-status.example.com",review,sensitive_information_request
+review_verify_pickup,"Please verify the pickup location for tomorrow at https://example.com/pickup",review,sensitive_information_request
+review_verify_delivery_window,"Please verify your delivery window for tomorrow at https://example.com/delivery",review,sensitive_information_request
+review_verify_shipping_contact,"Please verify the shipping contact name at https://example.com/shipping",review,sensitive_information_request
 review_event_limited_time,"Limited time: check the event details at https://example.com/register",review,scam_phrase
 review_code_login,"Use code 482913 to finish signing in.",review,code_like_number
+review_two_factor_code,"Your verification code is 246810 for the app login.",review,code_like_number
+review_app_code_notice,"Use verification code 112233 to complete your app sign in.",review,code_like_number
+review_security_code_notice,"Your security code is 554433 for the portal login.",review,code_like_number
+review_contact_verify_link,"Please verify your contact email at https://example.com/profile",review,sensitive_information_request
+review_shortened_event_link,"Check the event details at https://tinyurl.com/event-info",review,shortened_link
+review_shortened_webinar_link,"View the webinar details at https://bit.ly/webinar-agenda",review,shortened_link
+review_shortened_schedule_link,"Confirm the updated schedule at https://t.co/team-calendar",review,shortened_link
 suspicious_short_link_threat,"Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",suspicious,shortened_link
 suspicious_reward_lure,"Winner! Claim your gift now at www.fake-prize.example with code 123456",suspicious,reward_lure
 suspicious_sensitive_code,"Urgent!!! Verify your account now using this code: 123456",suspicious,sensitive_information_request
 suspicious_bank_lockout,"Urgent: your bank account is locked today. Verify now at https://bit.ly/account-help",suspicious,account_restriction_threat
 suspicious_bonus_code,"Winner!!! Claim your bonus now at www.reward-center.example with code 884422",suspicious,reward_lure
 suspicious_password_expiry,"Your password will expire today. Update it immediately at http://security-check.example",suspicious,account_restriction_threat
+suspicious_locked_code_link,"Your account is locked today. Use code 135790 at https://bit.ly/unlock-now",suspicious,account_restriction_threat
+suspicious_refund_lure,"Claim your refund bonus now at www.refund-prize.example with PIN 998877",suspicious,reward_lure

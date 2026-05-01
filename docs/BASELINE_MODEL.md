@@ -30,12 +30,12 @@ From the project root:
 Current local result:
 
 ```text
-Calibration examples: 30
+Calibration examples: 67
 Feature columns: 30
 Heuristic accuracy: 100.0%
-Baseline CV accuracy: 70.0%
+Baseline CV accuracy: 92.5%
 Heuristic misses: 0
-Baseline CV misses: 9
+Baseline CV misses: 5
 ```
 
 ## Export Predictions
@@ -56,6 +56,8 @@ experiments only until the project has a larger and more representative dataset.
 ## Interpretation
 
 The heuristic currently wins on the small calibration set because those examples
-were designed around known rules. The baseline is still useful because it proves
-that the signal table can feed a model, and it gives CyberLureAI a repeatable
-way to compare future model improvements against the explainable heuristic path.
+were designed around known rules. The baseline improved after adding targeted
+examples, but it is still experimental. It proves that the signal table can feed
+a model, and it gives CyberLureAI a repeatable way to compare future model
+improvements against the explainable heuristic path. The current gaps are now
+concentrated in a small number of `review` versus `suspicious` boundary cases.
