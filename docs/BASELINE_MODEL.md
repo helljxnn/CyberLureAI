@@ -32,22 +32,22 @@ Current local result:
 
 ```text
 Unified baseline:
-- Calibration examples: 67
+- Calibration examples: 82
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
-- Baseline CV accuracy: 92.5%
-- Baseline CV misses: 5
+- Baseline CV accuracy: 96.3%
+- Baseline CV misses: 3
 
 Separate baselines by type:
-- Calibration examples: 67
+- Calibration examples: 82
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
-- Baseline CV accuracy: 94.0%
-- Baseline CV misses: 4
+- Baseline CV accuracy: 97.6%
+- Baseline CV misses: 2
 
 Per-type baseline accuracy:
-- Unified: `message 96.7%`, `url 89.2%`
-- Separate: `message 93.3%`, `url 94.6%`
+- Unified: `message 94.3%`, `url 97.9%`
+- Separate: `message 97.1%`, `url 97.9%`
 ```
 
 ## Export Predictions
@@ -61,6 +61,12 @@ Export per-class metrics:
 ```powershell
 .venv\Scripts\python.exe -m backend.app.services.baseline_classifier --class-metrics-csv reports/baseline_class_metrics.csv --sample-type-metrics-csv reports/baseline_sample_type_metrics.csv
 ```
+
+The current local report exports are:
+
+- `reports/baseline_predictions.csv`
+- `reports/baseline_class_metrics.csv`
+- `reports/baseline_sample_type_metrics.csv`
 
 ## Persist A Trained Experimental Model
 
@@ -84,6 +90,6 @@ were designed around known rules. The baseline improved after adding targeted
 examples, but it is still experimental. It proves that the signal table can feed
 a model, and it gives CyberLureAI a repeatable way to compare future model
 improvements against the explainable heuristic path. At the moment, separate
-models perform better overall than one shared model, mainly because URL mistakes
-drop more than message mistakes increase. The current gaps are concentrated in a
-small number of `review` versus `suspicious` boundary cases.
+models perform better overall than one shared model. The remaining separate-model
+misses are concentrated in `review` cases that look close to suspicious:
+hyphen-heavy account URLs and delivery verification language.

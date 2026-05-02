@@ -8,15 +8,20 @@ safe_help_center_link,"Here is the help center article: https://example.com/help
 safe_training_link,"The security awareness training slides are at https://example.com/training",likely_safe,contains_link
 safe_project_link,"Project notes are available here: https://example.com/project-notes",likely_safe,contains_link
 review_limited_time_link,"Limited time update: review the new policy at https://example.com",review,contains_link
+review_policy_limited_time_link,"Limited time: review the updated policy at https://example.com/policy",review,scam_phrase
+review_webinar_limited_time,"Limited time: check the webinar details at https://example.com/webinar",review,scam_phrase
 review_verify_delivery,"Please verify the delivery address today at https://delivery-status.example.com",review,sensitive_information_request
 review_verify_pickup,"Please verify the pickup location for tomorrow at https://example.com/pickup",review,sensitive_information_request
 review_verify_delivery_window,"Please verify your delivery window for tomorrow at https://example.com/delivery",review,sensitive_information_request
 review_verify_shipping_contact,"Please verify the shipping contact name at https://example.com/shipping",review,sensitive_information_request
+review_delivery_address_update,"Please verify the delivery address update at https://example.com/delivery-address",review,sensitive_information_request
+review_courier_contact_check,"Please verify the courier contact at https://example.com/courier-contact",review,sensitive_information_request
 review_event_limited_time,"Limited time: check the event details at https://example.com/register",review,scam_phrase
 review_code_login,"Use code 482913 to finish signing in.",review,code_like_number
 review_two_factor_code,"Your verification code is 246810 for the app login.",review,code_like_number
 review_app_code_notice,"Use verification code 112233 to complete your app sign in.",review,code_like_number
 review_security_code_notice,"Your security code is 554433 for the portal login.",review,code_like_number
+review_pickup_code_notice,"Use pickup code 492817 at the service desk tomorrow.",review,code_like_number
 review_contact_verify_link,"Please verify your contact email at https://example.com/profile",review,sensitive_information_request
 review_shortened_event_link,"Check the event details at https://tinyurl.com/event-info",review,shortened_link
 review_shortened_webinar_link,"View the webinar details at https://bit.ly/webinar-agenda",review,shortened_link

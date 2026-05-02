@@ -92,38 +92,62 @@ Remaining misses:
 | `suspicious_shortener_bank_terms` | `suspicious` | `review` | Shortener plus bank terms still needs more strong suspicious variants. |
 | `review_verify_delivery` | `review` | `suspicious` | Legitimate delivery verification still trends too risky. |
 
+## Current Result
+
+After a third calibration pass focused on shortener-only review URLs,
+hyphen-heavy review URLs, deep phishing URL chains, shortener-plus-bank URLs,
+limited-time review messages, and benign delivery/contact verification messages:
+
+```text
+Calibration examples: 82
+Feature columns: 30
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 96.3%
+Unified baseline misses: 3
+Separate baseline accuracy: 97.6%
+Separate baseline misses: 2
+```
+
+Current separate-model misses:
+
+| Sample | Expected | Baseline | Pattern |
+| --- | --- | --- | --- |
+| `review_repeated_hyphen_update` | `review` | `suspicious` | Hyphen plus phishing keyword boundary still looks too strong. |
+| `review_verify_delivery` | `review` | `suspicious` | Legitimate delivery verification still trends too risky. |
+
 ## Unified Vs Separate Models
 
 Current comparison:
 
 ```text
-Unified baseline accuracy: 92.5%
-Separate baseline accuracy: 94.0%
+Unified baseline accuracy: 96.3%
+Separate baseline accuracy: 97.6%
 
 Unified per-type accuracy:
-- message: 96.7%
-- url: 89.2%
+- message: 94.3%
+- url: 97.9%
 
 Separate per-type accuracy:
-- message: 93.3%
-- url: 94.6%
+- message: 97.1%
+- url: 97.9%
 ```
 
 Interpretation:
 
-- A single shared model still over-compresses some URL boundary cases.
-- Splitting URL and message models improves overall performance because URL
-  accuracy rises more than message accuracy falls.
-- `review` remains the hardest class in both strategies, especially when a case
-  includes one moderate signal without stronger threat context.
+- The added targeted examples removed the previous shortener-only URL miss and
+  limited-time message miss from the separate baseline.
+- Separate URL and message baselines remain the stronger experimental default.
+- The remaining misses are still `review` versus `suspicious` boundaries around
+  hyphen-heavy account URLs and delivery verification language.
 
 ## Next Data Priorities
 
-- Add more `review` URLs that contain only a shortener or only moderate visual
-  structure signals.
-- Add more `suspicious` shortener-plus-banking and deep-chain phishing URLs.
+- Add more benign-but-cautionary `review` URLs with hyphen-heavy account or
+  update language.
 - Add more `review` delivery verification messages that stay benign while still
-  containing account or contact confirmation language.
+  containing account, address, or contact confirmation language.
+- Keep watching for `suspicious` shortener-plus-banking and deep-chain phishing
+  regressions as the dataset grows.
 - Keep heuristic and baseline results side by side until the dataset is larger
   and model metrics are less sensitive to individual examples.
 - Treat separate URL and message baselines as the stronger experimental default
