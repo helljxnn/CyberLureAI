@@ -10,6 +10,9 @@ safe_paypal_signin,https://www.paypal.com/signin,likely_safe,phishing_keywords
 review_shortener,https://bit.ly/account-update,review,link_shortener
 review_tinyurl_notice,https://tinyurl.com/security-notice,review,link_shortener
 review_tco_profile_update,https://t.co/profile-update,review,link_shortener
+review_owly_team_notice,https://ow.ly/team-notice,review,link_shortener
+review_isgd_policy_update,https://is.gd/policy-update,review,link_shortener
+review_rebrandly_security_notice,https://rebrand.ly/security-notice,review,link_shortener
 review_http_verify_page,http://example.org/verify,review,insecure_http
 review_insecure_account_page,http://example.com/account,review,insecure_http
 review_http_member_portal,http://portal.example.org/account,review,insecure_http
@@ -22,6 +25,9 @@ review_hyphen_account_center,https://customer-account-center.example.com,review,
 review_hyphen_secure_notice,https://secure-notice-center.example.org,review,repeated_hyphens
 review_repeated_hyphen_update,https://account-update-login.example.com,review,repeated_hyphens
 review_hyphen_member_login,https://member-login-center.example.net,review,repeated_hyphens
+review_customer_update_center,https://customer-update-center.example.com,review,repeated_hyphens
+review_member_login_help,https://member-login-help.example.net,review,repeated_hyphens
+review_account_notice_center,https://account-notice-center.example.org,review,repeated_hyphens
 suspicious_ip_destination,http://192.168.0.10/secure-login,suspicious,ip_address_destination
 suspicious_brand_impersonation,https://paypal-secure-check.example.com/login,suspicious,brand_impersonation
 suspicious_apple_impersonation,https://apple-id-verify.example.net/signin,suspicious,brand_impersonation
@@ -30,9 +36,13 @@ suspicious_hidden_destination,http://example.com@secure-login-bank.example.net,s
 suspicious_deep_bank_chain,https://login.bank.account.verify.alert.example.com,suspicious,deep_subdomain_chain
 suspicious_deep_paypal_chain,https://login.paypal.account.verify.security.example.net,suspicious,deep_subdomain_chain
 suspicious_deep_microsoft_chain,https://secure.microsoft.account.update.alert.example.org,suspicious,deep_subdomain_chain
+suspicious_deep_bank_verify_chain,https://secure.bank.verify.account.alert.example.com,suspicious,deep_subdomain_chain
+suspicious_deep_credit_login_chain,https://login.credit.account.verify.alert.example.net,suspicious,deep_subdomain_chain
 suspicious_http_brand_terms,http://microsoft-login-update.example.org/secure,suspicious,http_with_phishing_terms
 suspicious_whatsapp_impersonation,https://whatsapp-security-update.example.net/verify,suspicious,brand_impersonation
 suspicious_google_impersonation,http://google-account-verify.example.net/login,suspicious,brand_impersonation
 suspicious_shortener_bank_terms,https://bit.ly/bank-verify-account,suspicious,link_shortener
 suspicious_shortener_paypal_terms,http://tinyurl.com/paypal-secure-confirm-login,suspicious,link_shortener
 suspicious_shortener_microsoft_terms,http://t.co/microsoft-secure-account-verify,suspicious,link_shortener
+suspicious_shortener_bank_login,https://bit.ly/bank-login-secure,suspicious,link_shortener
+suspicious_shortener_secure_bank,https://tinyurl.com/secure-bank-confirm,suspicious,link_shortener
