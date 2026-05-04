@@ -92,60 +92,68 @@ Remaining misses:
 | `suspicious_shortener_bank_terms` | `suspicious` | `review` | Shortener plus bank terms still needs more strong suspicious variants. |
 | `review_verify_delivery` | `review` | `suspicious` | Legitimate delivery verification still trends too risky. |
 
-## Current Result
+## Fourth Calibration Result
 
-After a third calibration pass focused on shortener-only review URLs,
-hyphen-heavy review URLs, deep phishing URL chains, shortener-plus-bank URLs,
-limited-time review messages, and benign delivery/contact verification messages:
+After a fourth calibration pass focused on the two remaining separate-model
+misses, the CSVs include more benign-but-cautionary `review` URLs with
+hyphen-heavy account/update/login language, more legitimate delivery and contact
+verification messages, and nearby suspicious controls with account threats,
+shorteners, HTTP, and code language:
 
 ```text
-Calibration examples: 82
+Calibration examples: 116
 Feature columns: 30
 Heuristic accuracy: 100.0%
-Unified baseline accuracy: 96.3%
-Unified baseline misses: 3
-Separate baseline accuracy: 97.6%
-Separate baseline misses: 2
+Unified baseline accuracy: 96.6%
+Unified baseline misses: 4
+Separate baseline accuracy: 100.0%
+Separate baseline misses: 0
 ```
 
-Current separate-model misses:
+Current unified-model misses:
 
 | Sample | Expected | Baseline | Pattern |
 | --- | --- | --- | --- |
-| `review_repeated_hyphen_update` | `review` | `suspicious` | Hyphen plus phishing keyword boundary still looks too strong. |
-| `review_verify_delivery` | `review` | `suspicious` | Legitimate delivery verification still trends too risky. |
+| `suspicious_brand_impersonation` | `suspicious` | `review` | Unified training still underweights some brand impersonation URLs. |
+| `suspicious_apple_impersonation` | `suspicious` | `review` | Unified training still underweights some brand impersonation URLs. |
+| `suspicious_netflix_impersonation` | `suspicious` | `review` | Unified training still underweights some brand impersonation URLs. |
+| `suspicious_whatsapp_impersonation` | `suspicious` | `review` | Unified training still underweights some brand impersonation URLs. |
+
+Current separate-model misses: none.
 
 ## Unified Vs Separate Models
 
 Current comparison:
 
 ```text
-Unified baseline accuracy: 96.3%
-Separate baseline accuracy: 97.6%
+Unified baseline accuracy: 96.6%
+Separate baseline accuracy: 100.0%
 
 Unified per-type accuracy:
-- message: 94.3%
-- url: 97.9%
+- message: 100.0%
+- url: 93.8%
 
 Separate per-type accuracy:
-- message: 97.1%
-- url: 97.9%
+- message: 100.0%
+- url: 100.0%
 ```
 
 Interpretation:
 
-- The added targeted examples removed the previous shortener-only URL miss and
-  limited-time message miss from the separate baseline.
-- Separate URL and message baselines remain the stronger experimental default.
-- The remaining misses are still `review` versus `suspicious` boundaries around
-  hyphen-heavy account URLs and delivery verification language.
+- The added targeted examples removed the previous separate-model misses around
+  hyphen-heavy account URLs and legitimate delivery verification messages.
+- Separate URL and message baselines are now clearly stronger than the unified
+  experimental model on the current calibration set.
+- The unified model now concentrates its misses in suspicious brand
+  impersonation URLs, which reinforces keeping URL and message behavior
+  evaluated separately.
 
 ## Next Data Priorities
 
-- Add more benign-but-cautionary `review` URLs with hyphen-heavy account or
-  update language.
-- Add more `review` delivery verification messages that stay benign while still
-  containing account, address, or contact confirmation language.
+- Add more suspicious brand impersonation URL variants while keeping nearby
+  benign `review` account/update URL controls.
+- Add new delivery/contact verification examples only when fresh user-facing
+  patterns appear, since the current separate message baseline has no misses.
 - Keep watching for `suspicious` shortener-plus-banking and deep-chain phishing
   regressions as the dataset grows.
 - Keep heuristic and baseline results side by side until the dataset is larger

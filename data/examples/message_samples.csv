@@ -16,6 +16,20 @@ review_verify_delivery_window,"Please verify your delivery window for tomorrow a
 review_verify_shipping_contact,"Please verify the shipping contact name at https://example.com/shipping",review,sensitive_information_request
 review_delivery_address_update,"Please verify the delivery address update at https://example.com/delivery-address",review,sensitive_information_request
 review_courier_contact_check,"Please verify the courier contact at https://example.com/courier-contact",review,sensitive_information_request
+review_delivery_address_confirm,"Please verify the delivery address before tomorrow at https://example.com/address-confirm",review,sensitive_information_request
+review_delivery_contact_name,"Please verify the delivery contact name at https://example.com/contact-name",review,sensitive_information_request
+review_pickup_location_confirm,"Please verify the pickup location for your order at https://example.com/pickup-location",review,sensitive_information_request
+review_shipping_window_confirm,"Please verify the shipping window for tomorrow at https://example.com/shipping-window",review,sensitive_information_request
+review_courier_phone_confirm,"Please verify the courier phone number at https://example.com/courier-phone",review,sensitive_information_request
+review_service_address_check,"Please verify the service address on file at https://example.com/service-address",review,sensitive_information_request
+review_contact_preference_update,"Please verify your contact preference at https://example.com/contact-preference",review,sensitive_information_request
+review_delivery_note_confirm,"Please verify the delivery note for the driver at https://example.com/delivery-note",review,sensitive_information_request
+review_delivery_address_today,"Please verify the delivery address today at https://example.com/address-check",review,sensitive_information_request
+review_delivery_contact_today,"Please verify the delivery contact today at https://example.com/contact-check",review,sensitive_information_request
+review_delivery_window_today,"Please verify the delivery window today at https://example.com/window-check",review,sensitive_information_request
+review_shipping_address_today,"Please verify the shipping address today at https://example.com/shipping-address",review,sensitive_information_request
+review_courier_address_today,"Please verify the courier address note today at https://example.com/courier-address",review,sensitive_information_request
+review_pickup_contact_today,"Please verify the pickup contact today at https://example.com/pickup-contact",review,sensitive_information_request
 review_event_limited_time,"Limited time: check the event details at https://example.com/register",review,scam_phrase
 review_code_login,"Use code 482913 to finish signing in.",review,code_like_number
 review_two_factor_code,"Your verification code is 246810 for the app login.",review,code_like_number
@@ -34,3 +48,6 @@ suspicious_bonus_code,"Winner!!! Claim your bonus now at www.reward-center.examp
 suspicious_password_expiry,"Your password will expire today. Update it immediately at http://security-check.example",suspicious,account_restriction_threat
 suspicious_locked_code_link,"Your account is locked today. Use code 135790 at https://bit.ly/unlock-now",suspicious,account_restriction_threat
 suspicious_refund_lure,"Claim your refund bonus now at www.refund-prize.example with PIN 998877",suspicious,reward_lure
+suspicious_delivery_lockout,"Urgent: your delivery account is locked today. Verify now at https://bit.ly/delivery-unlock",suspicious,account_restriction_threat
+suspicious_bank_code_shortlink,"Security alert: bank access is blocked today. Use code 864200 at https://tinyurl.com/bank-unlock",suspicious,account_restriction_threat
+suspicious_delivery_code_threat,"Security alert: delivery access is blocked today. Use code 642086 at https://bit.ly/delivery-access",suspicious,account_restriction_threat

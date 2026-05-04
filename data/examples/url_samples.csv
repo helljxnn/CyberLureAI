@@ -28,6 +28,20 @@ review_hyphen_member_login,https://member-login-center.example.net,review,repeat
 review_customer_update_center,https://customer-update-center.example.com,review,repeated_hyphens
 review_member_login_help,https://member-login-help.example.net,review,repeated_hyphens
 review_account_notice_center,https://account-notice-center.example.org,review,repeated_hyphens
+review_billing_account_notice,https://billing-account-notice.example.com,review,repeated_hyphens
+review_account_update_center,https://account-update-center.example.org,review,repeated_hyphens
+review_customer_login_help,https://customer-login-help.example.net,review,repeated_hyphens
+review_member_update_portal,https://member-update-portal.example.com,review,repeated_hyphens
+review_service_account_notice,https://service-account-notice.example.org,review,repeated_hyphens
+review_profile_login_center,https://profile-login-center.example.net,review,repeated_hyphens
+review_access_update_help,https://access-update-help.example.com,review,repeated_hyphens
+review_account_message_center,https://account-message-center.example.org,review,repeated_hyphens
+review_account_update_signin,https://account-update-signin.example.com,review,repeated_hyphens
+review_account_login_update,https://account-login-update.example.org,review,repeated_hyphens
+review_secure_account_update,https://secure-account-update.example.net,review,repeated_hyphens
+review_login_update_notice,https://login-update-notice.example.com,review,repeated_hyphens
+review_account_update_help,https://account-update-help.example.org,review,repeated_hyphens
+review_customer_account_login,https://customer-account-login.example.net,review,repeated_hyphens
 suspicious_ip_destination,http://192.168.0.10/secure-login,suspicious,ip_address_destination
 suspicious_brand_impersonation,https://paypal-secure-check.example.com/login,suspicious,brand_impersonation
 suspicious_apple_impersonation,https://apple-id-verify.example.net/signin,suspicious,brand_impersonation
@@ -46,3 +60,6 @@ suspicious_shortener_paypal_terms,http://tinyurl.com/paypal-secure-confirm-login
 suspicious_shortener_microsoft_terms,http://t.co/microsoft-secure-account-verify,suspicious,link_shortener
 suspicious_shortener_bank_login,https://bit.ly/bank-login-secure,suspicious,link_shortener
 suspicious_shortener_secure_bank,https://tinyurl.com/secure-bank-confirm,suspicious,link_shortener
+suspicious_http_bank_verify_login,http://bank-account-verify-login.example.com,suspicious,http_with_phishing_terms
+suspicious_http_secure_account_update,http://secure-account-update-confirm.example.net,suspicious,http_with_phishing_terms
+suspicious_http_login_verify_alert,http://login-verify-account-alert.example.com,suspicious,http_with_phishing_terms
