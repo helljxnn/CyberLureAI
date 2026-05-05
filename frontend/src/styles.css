@@ -134,8 +134,8 @@ h1 {
 }
 
 .example-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -204,6 +204,40 @@ h1 {
   background: rgba(35, 23, 13, 0.05);
   color: var(--muted);
   border: 1px solid rgba(35, 23, 13, 0.08);
+}
+
+.ghost-button[data-tone] {
+  display: grid;
+  gap: 3px;
+  justify-items: start;
+  min-height: 58px;
+  text-align: left;
+  white-space: normal;
+}
+
+.ghost-button[data-tone="low"] {
+  border-color: rgba(15, 118, 110, 0.2);
+}
+
+.ghost-button[data-tone="medium"] {
+  border-color: rgba(147, 100, 18, 0.22);
+}
+
+.ghost-button[data-tone="high"] {
+  border-color: rgba(200, 71, 61, 0.22);
+}
+
+.ghost-button small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.compact-button {
+  min-height: auto;
+  padding: 7px 10px;
+  text-align: center;
 }
 
 .primary-button:not(:disabled):hover,
@@ -283,6 +317,17 @@ h1 {
   color: var(--primary-dark);
 }
 
+.pill-neutral {
+  background: rgba(31, 45, 43, 0.08);
+  color: var(--muted);
+}
+
+.result-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, max-content));
+  align-items: center;
+}
+
 .result-panel h3 {
   margin-bottom: 10px;
   font-size: 1rem;
@@ -351,9 +396,18 @@ h1 {
 }
 
 .signal-code {
+  display: block;
+  margin-bottom: 4px;
   font-size: 0.88rem;
   font-weight: 700;
   text-transform: capitalize;
+}
+
+.signal-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .signal-meta {
@@ -364,6 +418,18 @@ h1 {
   text-transform: uppercase;
 }
 
+.signal-low {
+  color: var(--muted);
+}
+
+.signal-medium {
+  color: var(--amber);
+}
+
+.signal-high {
+  color: var(--primary-dark);
+}
+
 .result-panel p {
   margin: 0 0 10px;
   line-height: 1.6;
@@ -372,6 +438,10 @@ h1 {
 .result-panel ul {
   margin: 0;
   padding-left: 18px;
+}
+
+.compact-list {
+  margin-bottom: 12px !important;
 }
 
 .result-panel li + li {
@@ -468,6 +538,12 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.history-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
 @media (max-width: 980px) {
   .hero,
   .content-grid {
@@ -510,10 +586,19 @@ h1 {
     flex-direction: column;
   }
 
+  .example-row,
+  .result-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
   .history-header,
   .history-item {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .history-actions {
+    justify-items: start;
   }
 
   .tips-list {
