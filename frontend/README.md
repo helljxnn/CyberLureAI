@@ -20,6 +20,9 @@ The frontend now uses a lightweight React + Vite setup:
 
 It connects directly to the backend API endpoints.
 Successful URL and message checks are also stored in a small local browser history so recent results can be compared during manual testing.
+The interface includes quick examples for likely safe, review, and suspicious
+cases, clearer signal descriptions, safe next-step guidance, and a reuse action
+for recent history items.
 
 ## How to test manually
 
@@ -61,6 +64,8 @@ http://127.0.0.1:8000
 - API connection
 - URL analysis
 - message analysis
+- quick example buttons for each risk category
+- safe next-step guidance in the result panel
 - local analysis history
 
 ## Notes

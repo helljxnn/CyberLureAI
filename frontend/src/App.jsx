@@ -5,31 +5,56 @@ const HISTORY_KEY = "cyberlureai.analysisHistory";
 const HISTORY_LIMIT = 6;
 const URL_EXAMPLES = [
   {
-    label: "Safe example",
+    label: "Trusted site",
+    tone: "low",
+    hint: "Expected: likely safe",
     value: "https://www.openai.com",
   },
   {
-    label: "Suspicious example",
-    value: "http://secure-login-bank-verify.example.com",
+    label: "Review URL",
+    tone: "medium",
+    hint: "Expected: needs review",
+    value: "https://account-update-center.example.org",
   },
   {
-    label: "Short link example",
+    label: "Short link",
+    tone: "medium",
+    hint: "Expected: needs review",
     value: "https://bit.ly/account-update",
+  },
+  {
+    label: "Bank warning",
+    tone: "high",
+    hint: "Expected: suspicious",
+    value: "http://bank-account-verify-login.example.com",
   },
 ];
 const MESSAGE_EXAMPLES = [
   {
-    label: "Safe example",
+    label: "Meeting note",
+    tone: "low",
+    hint: "Expected: likely safe",
     value: "Hi, just checking in to confirm our meeting tomorrow.",
   },
   {
-    label: "Suspicious example",
-    value: "Urgent: verify your bank account now by clicking https://fake-bank-alert.example",
+    label: "Delivery check",
+    tone: "medium",
+    hint: "Expected: needs review",
+    value:
+      "Please verify the delivery address today at https://example.com/address-check",
   },
   {
-    label: "Threat example",
+    label: "Account threat",
+    tone: "high",
+    hint: "Expected: suspicious",
     value:
       "Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",
+  },
+  {
+    label: "Prize lure",
+    tone: "high",
+    hint: "Expected: suspicious",
+    value: "Winner!!! Claim your bonus now at www.reward-center.example with code 884422",
   },
 ];
 const RISK_METADATA = {
@@ -56,6 +81,20 @@ const VERDICT_LABELS = {
   likely_safe: "Likely safe",
   review: "Needs review",
   suspicious: "Suspicious",
+};
+const SAFE_CHECKLIST = {
+  likely_safe: [
+    "Confirm the domain or sender is the one you expected.",
+    "Avoid entering sensitive data unless you initiated the action.",
+  ],
+  review: [
+    "Verify the sender through a trusted channel before clicking.",
+    "Inspect the full domain and avoid entering passwords or codes.",
+  ],
+  suspicious: [
+    "Do not click, reply, or enter personal information.",
+    "Report or delete it, then verify the issue through an official channel.",
+  ],
 };
 
 function loadAnalysisHistory() {
@@ -109,6 +148,14 @@ function getRiskMetadata(riskLevel) {
 function formatVerdict(verdict) {
   const value = String(verdict || "unknown");
   return VERDICT_LABELS[value] || value.replaceAll("_", " ");
+}
+
+function getSafeChecklist(verdict) {
+  return SAFE_CHECKLIST[verdict] || SAFE_CHECKLIST.review;
+}
+
+function formatSignalCode(code) {
+  return String(code || "unknown_signal").replaceAll("_", " ");
 }
 
 function parseAppError(error) {
@@ -188,6 +235,7 @@ function ResultPanel({ title, state }) {
   const risk = getRiskMetadata(state.data.risk_level);
   const score = Math.min(100, Math.max(0, Number(state.data.risk_score) || 0));
   const signals = Array.isArray(state.data.signals) ? state.data.signals : [];
+  const checklist = getSafeChecklist(state.data.verdict);
 
   return (
     <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
@@ -202,9 +250,10 @@ function ResultPanel({ title, state }) {
         <span style={{ width: `${score}%` }} />
       </div>
       <p className="result-summary">{risk.summary}</p>
-      <div className="result-meta">
+      <div className="result-meta result-meta-grid">
         <span className={`pill ${riskClass}`}>Risk: {risk.label}</span>
         <span className={`pill ${riskClass}`}>Verdict: {formatVerdict(state.data.verdict)}</span>
+        <span className="pill pill-neutral">Signals: {signals.length}</span>
       </div>
       <h3>Explanation</h3>
       <p>{state.data.explanation}</p>
@@ -212,15 +261,24 @@ function ResultPanel({ title, state }) {
       <p>{risk.insight}</p>
       <h3>Recommended action</h3>
       <p>{state.data.recommended_action}</p>
+      <h3>Safe next steps</h3>
+      <ul className="compact-list">
+        {checklist.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ul>
       {signals.length > 0 && (
         <>
           <h3>Detected signals</h3>
           <div className="signal-list">
             {signals.map((signal) => (
               <article className="signal-item" key={signal.code}>
-                <span className="signal-code">{signal.code.replaceAll("_", " ")}</span>
-                <span className="signal-meta">
-                  {signal.severity} | +{signal.score}
+                <div>
+                  <span className="signal-code">{formatSignalCode(signal.code)}</span>
+                  <p>{signal.description}</p>
+                </div>
+                <span className={`signal-meta signal-${signal.severity}`}>
+                  {signal.severity} +{signal.score}
                 </span>
               </article>
             ))}
@@ -273,6 +331,15 @@ export default function App() {
   function clearHistory() {
     saveAnalysisHistory([]);
     setAnalysisHistory([]);
+  }
+
+  function useHistoryEntry(item) {
+    if (item.kind === "URL") {
+      setUrlInput(item.input);
+      return;
+    }
+
+    setMessageInput(item.input);
   }
 
   async function checkConnection() {
@@ -393,10 +460,13 @@ export default function App() {
                 <button
                   key={example.label}
                   className="ghost-button"
+                  data-tone={example.tone}
                   type="button"
+                  title={example.hint}
                   onClick={() => setUrlInput(example.value)}
                 >
-                  {example.label}
+                  <span>{example.label}</span>
+                  <small>{example.hint}</small>
                 </button>
               ))}
             </div>
@@ -432,10 +502,13 @@ export default function App() {
                 <button
                   key={example.label}
                   className="ghost-button"
+                  data-tone={example.tone}
                   type="button"
+                  title={example.hint}
                   onClick={() => setMessageInput(example.value)}
                 >
-                  {example.label}
+                  <span>{example.label}</span>
+                  <small>{example.hint}</small>
                 </button>
               ))}
             </div>
@@ -455,20 +528,20 @@ export default function App() {
 
           <div className="tips-list">
             <article className="tip-item">
-              <h3>Risk level</h3>
-              <p>Shows whether the backend thinks the content looks low, medium, or high risk.</p>
+              <h3>Risk score</h3>
+              <p>Shows the current heuristic score from 0 to 100 for fast comparison.</p>
             </article>
             <article className="tip-item">
-              <h3>Reasons</h3>
-              <p>Lists the patterns that triggered the current heuristic analysis.</p>
+              <h3>Signals</h3>
+              <p>Names the patterns that triggered the current explainable analysis.</p>
             </article>
             <article className="tip-item">
-              <h3>Recommended action</h3>
-              <p>Gives the next safe step a normal user should take.</p>
+              <h3>Safe next steps</h3>
+              <p>Turns the verdict into practical actions for non-technical users.</p>
             </article>
             <article className="tip-item">
               <h3>Next sprint focus</h3>
-              <p>Compare the current scores against more phishing examples before adding a model.</p>
+              <p>Keep comparing heuristic results against the experimental baseline.</p>
             </article>
           </div>
         </section>
@@ -507,7 +580,16 @@ export default function App() {
                       <p>{item.input}</p>
                       <span className="history-time">{item.created_at}</span>
                     </div>
-                    <span className={`pill ${itemRiskClass}`}>{formatVerdict(item.verdict)}</span>
+                    <div className="history-actions">
+                      <span className={`pill ${itemRiskClass}`}>{formatVerdict(item.verdict)}</span>
+                      <button
+                        className="ghost-button compact-button"
+                        type="button"
+                        onClick={() => useHistoryEntry(item)}
+                      >
+                        Reuse
+                      </button>
+                    </div>
                   </article>
                 );
               })}
