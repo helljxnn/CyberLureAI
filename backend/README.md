@@ -80,6 +80,7 @@ Responses include:
 
 - `reasons` for user-friendly explanations
 - `signals` for structured detection details such as `code`, `severity`, `score`, and `description`
+- `experimental_model` for a cached separate-baseline comparison that does not replace the heuristic verdict
 
 The analyzer calculates risk by combining the base score with the structured signal scores. This keeps the current heuristic MVP explainable while preparing the project for later feature extraction and baseline model work.
 
@@ -143,6 +144,7 @@ Responses include:
 
 - `reasons` for user-friendly explanations
 - `signals` for structured detection details such as `code`, `severity`, `score`, and `description`
+- `experimental_model` for a cached separate-baseline comparison that does not replace the heuristic verdict
 
 Validation notes:
 

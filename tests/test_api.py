@@ -53,6 +53,15 @@ def test_url_analysis_endpoint_returns_expected_shape() -> None:
     assert isinstance(body["signals"], list)
     assert len(body["signals"]) == len(body["reasons"])
     assert {"code", "severity", "score", "description"} <= set(body["signals"][0])
+    assert body["experimental_model"]["status"] == "available"
+    assert body["experimental_model"]["strategy"] == "separate_by_type"
+    assert body["experimental_model"]["sample_type"] == "url"
+    assert body["experimental_model"]["verdict"] in {
+        "likely_safe",
+        "review",
+        "suspicious",
+    }
+    assert isinstance(body["experimental_model"]["agrees_with_heuristic"], bool)
 
 
 def test_url_analysis_endpoint_flags_ip_address_destination() -> None:
@@ -88,6 +97,14 @@ def test_message_analysis_endpoint_flags_suspicious_content() -> None:
     assert body["verdict"] in {"review", "suspicious"}
     assert isinstance(body["risk_score"], int)
     assert len(body["reasons"]) >= 1
+    assert body["experimental_model"]["status"] == "available"
+    assert body["experimental_model"]["strategy"] == "separate_by_type"
+    assert body["experimental_model"]["sample_type"] == "message"
+    assert body["experimental_model"]["verdict"] in {
+        "likely_safe",
+        "review",
+        "suspicious",
+    }
 
 
 def test_message_analysis_endpoint_flags_shortened_link_threat() -> None:

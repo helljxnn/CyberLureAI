@@ -378,6 +378,39 @@ h1 {
   color: var(--muted);
 }
 
+.model-comparison {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.model-comparison div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(31, 45, 43, 0.1);
+  border-radius: var(--radius-md);
+  background: rgba(15, 118, 110, 0.06);
+}
+
+.comparison-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.model-comparison strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.model-note {
+  color: var(--muted);
+}
+
 .signal-list {
   display: grid;
   gap: 8px;
@@ -587,7 +620,8 @@ h1 {
   }
 
   .example-row,
-  .result-meta-grid {
+  .result-meta-grid,
+  .model-comparison {
     grid-template-columns: 1fr;
   }
 

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, HttpUrl
 
 from backend.app.schemas.analysis_signal import AnalysisSignal
+from backend.app.schemas.experimental_model import ExperimentalModelAnalysis
 
 
 class URLAnalysisRequest(BaseModel):
@@ -20,3 +21,4 @@ class URLAnalysisResponse(BaseModel):
     recommended_action: str
     reasons: list[str]
     signals: list[AnalysisSignal] = Field(default_factory=list)
+    experimental_model: ExperimentalModelAnalysis | None = None
