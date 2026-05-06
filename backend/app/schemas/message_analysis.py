@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 
 from backend.app.schemas.analysis_signal import AnalysisSignal
+from backend.app.schemas.experimental_model import ExperimentalModelAnalysis
 
 
 class MessageAnalysisRequest(BaseModel):
@@ -29,3 +30,4 @@ class MessageAnalysisResponse(BaseModel):
     recommended_action: str
     reasons: list[str]
     signals: list[AnalysisSignal] = Field(default_factory=list)
+    experimental_model: ExperimentalModelAnalysis | None = None

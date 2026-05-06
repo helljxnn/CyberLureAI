@@ -1,4 +1,7 @@
 from backend.app.services.message_analyzer import analyze_message
+from backend.app.services.experimental_baseline import (
+    compare_with_experimental_baseline,
+)
 from backend.app.services.url_analyzer import analyze_url
 
 
@@ -87,3 +90,42 @@ def test_message_analyzer_marks_plain_message_as_low_risk() -> None:
     assert result.risk_score < 40
     assert len(result.reasons) >= 1
     assert result.signals[0].code == "no_strong_indicators"
+
+
+def test_experimental_baseline_compares_url_analysis_without_replacing_verdict() -> None:
+    result = analyze_url("https://paypal-secure-check.example.com/login")
+
+    comparison = compare_with_experimental_baseline(
+        sample_type="url",
+        heuristic_verdict=result.verdict,
+        risk_level=result.risk_level,
+        risk_score=result.risk_score,
+        signals=result.signals,
+    )
+
+    assert comparison.status == "available"
+    assert comparison.strategy == "separate_by_type"
+    assert comparison.sample_type == "url"
+    assert comparison.verdict in {"likely_safe", "review", "suspicious"}
+    assert comparison.note
+
+
+def test_experimental_baseline_compares_message_analysis_without_replacing_verdict() -> None:
+    result = analyze_message(
+        "Security alert: your account will be locked today. "
+        "Verify now at https://bit.ly/secure-login"
+    )
+
+    comparison = compare_with_experimental_baseline(
+        sample_type="message",
+        heuristic_verdict=result.verdict,
+        risk_level=result.risk_level,
+        risk_score=result.risk_score,
+        signals=result.signals,
+    )
+
+    assert comparison.status == "available"
+    assert comparison.strategy == "separate_by_type"
+    assert comparison.sample_type == "message"
+    assert comparison.verdict in {"likely_safe", "review", "suspicious"}
+    assert comparison.note

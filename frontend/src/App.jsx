@@ -131,6 +131,7 @@ function createHistoryEntry(kind, input, data) {
     risk_level: data.risk_level,
     risk_score: data.risk_score,
     verdict: data.verdict,
+    experimental_verdict: data.experimental_model?.verdict || null,
     created_at: new Date().toLocaleString(),
   };
 }
@@ -156,6 +157,14 @@ function getSafeChecklist(verdict) {
 
 function formatSignalCode(code) {
   return String(code || "unknown_signal").replaceAll("_", " ");
+}
+
+function formatConfidence(confidence) {
+  if (typeof confidence !== "number") {
+    return "Unavailable";
+  }
+
+  return `${Math.round(confidence * 100)}%`;
 }
 
 function parseAppError(error) {
@@ -236,6 +245,7 @@ function ResultPanel({ title, state }) {
   const score = Math.min(100, Math.max(0, Number(state.data.risk_score) || 0));
   const signals = Array.isArray(state.data.signals) ? state.data.signals : [];
   const checklist = getSafeChecklist(state.data.verdict);
+  const experimentalModel = state.data.experimental_model;
 
   return (
     <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
@@ -261,6 +271,40 @@ function ResultPanel({ title, state }) {
       <p>{risk.insight}</p>
       <h3>Recommended action</h3>
       <p>{state.data.recommended_action}</p>
+      {experimentalModel && (
+        <>
+          <h3>Experimental model</h3>
+          <div className="model-comparison">
+            <div>
+              <span className="comparison-label">Strategy</span>
+              <strong>{experimentalModel.strategy}</strong>
+            </div>
+            <div>
+              <span className="comparison-label">Model verdict</span>
+              <strong>
+                {experimentalModel.verdict
+                  ? formatVerdict(experimentalModel.verdict)
+                  : "Unavailable"}
+              </strong>
+            </div>
+            <div>
+              <span className="comparison-label">Confidence</span>
+              <strong>{formatConfidence(experimentalModel.confidence)}</strong>
+            </div>
+            <div>
+              <span className="comparison-label">Heuristic match</span>
+              <strong>
+                {experimentalModel.agrees_with_heuristic === true
+                  ? "Yes"
+                  : experimentalModel.agrees_with_heuristic === false
+                    ? "No"
+                    : "Unavailable"}
+              </strong>
+            </div>
+          </div>
+          <p className="model-note">{experimentalModel.note}</p>
+        </>
+      )}
       <h3>Safe next steps</h3>
       <ul className="compact-list">
         {checklist.map((step) => (
@@ -582,6 +626,11 @@ export default function App() {
                     </div>
                     <div className="history-actions">
                       <span className={`pill ${itemRiskClass}`}>{formatVerdict(item.verdict)}</span>
+                      {item.experimental_verdict && (
+                        <span className="pill pill-neutral">
+                          Model: {formatVerdict(item.experimental_verdict)}
+                        </span>
+                      )}
                       <button
                         className="ghost-button compact-button"
                         type="button"

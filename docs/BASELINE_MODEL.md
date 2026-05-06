@@ -28,6 +28,22 @@ From the project root:
 .venv\Scripts\python.exe -m backend.app.services.baseline_classifier
 ```
 
+## API Comparison Mode
+
+The `/analyze/url` and `/analyze/message` endpoints now include an
+`experimental_model` object. The API still treats the heuristic verdict as the
+primary user-facing behavior, while the experimental object trains separate URL
+and message baselines lazily from the calibration CSVs and caches them for local
+comparison.
+
+The comparison reports:
+
+- the `separate_by_type` strategy
+- the model verdict and confidence when available
+- whether the model agrees with the heuristic verdict
+- a note that the model is experimental and does not replace the explainable
+  analysis path
+
 Current local result:
 
 ```text
