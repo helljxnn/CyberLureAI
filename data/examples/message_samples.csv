@@ -43,6 +43,22 @@ review_shortened_schedule_link,"Confirm the updated schedule at https://t.co/tea
 suspicious_short_link_threat,"Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",suspicious,shortened_link
 suspicious_reward_lure,"Winner! Claim your gift now at www.fake-prize.example with code 123456",suspicious,reward_lure
 suspicious_sensitive_code,"Urgent!!! Verify your account now using this code: 123456",suspicious,sensitive_information_request
+suspicious_sensitive_pin,"Urgent!!! Verify your account now using this PIN: 778899",suspicious,sensitive_information_request
+suspicious_account_code_now,"Security alert!!! Verify your account today with code 220044",suspicious,sensitive_information_request
+suspicious_otp_account_verify,"Urgent: verify your account now with OTP 513579",suspicious,sensitive_information_request
+suspicious_code_credentials,"Urgent!!! Confirm your credentials now with code 991122",suspicious,sensitive_information_request
+suspicious_pin_access_verify,"Security alert: verify access today with PIN 440088",suspicious,sensitive_information_request
+suspicious_account_verify_code,"Verify your account immediately using code 735190",suspicious,sensitive_information_request
+suspicious_account_otp_today,"Security alert: verify your account today with OTP 806421",suspicious,sensitive_information_request
+suspicious_verify_account_pin,"Urgent: verify your account now with PIN 617284",suspicious,sensitive_information_request
+suspicious_access_code_today,"Security alert: verify access today using code 308642",suspicious,sensitive_information_request
+suspicious_credentials_pin_now,"Urgent: confirm your credentials now with PIN 194275",suspicious,sensitive_information_request
+suspicious_account_code_immediate,"Verify your account immediately with code 582604",suspicious,sensitive_information_request
+suspicious_otp_access_notice,"Security alert: verify access now with OTP 930517",suspicious,sensitive_information_request
+suspicious_pin_account_notice,"Urgent: account verification required today with PIN 461820",suspicious,sensitive_information_request
+suspicious_code_account_notice,"Security alert: account verification required now with code 274619",suspicious,sensitive_information_request
+suspicious_verify_credentials_otp,"Urgent: verify credentials immediately with OTP 719305",suspicious,sensitive_information_request
+suspicious_account_access_code,"Verify account access now using code 640183",suspicious,sensitive_information_request
 suspicious_bank_lockout,"Urgent: your bank account is locked today. Verify now at https://bit.ly/account-help",suspicious,account_restriction_threat
 suspicious_bonus_code,"Winner!!! Claim your bonus now at www.reward-center.example with code 884422",suspicious,reward_lure
 suspicious_password_expiry,"Your password will expire today. Update it immediately at http://security-check.example",suspicious,account_restriction_threat

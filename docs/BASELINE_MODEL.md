@@ -48,21 +48,21 @@ Current local result:
 
 ```text
 Unified baseline:
-- Calibration examples: 116
+- Calibration examples: 178
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
-- Baseline CV accuracy: 96.6%
-- Baseline CV misses: 4
+- Baseline CV accuracy: 100.0%
+- Baseline CV misses: 0
 
 Separate baselines by type:
-- Calibration examples: 116
+- Calibration examples: 178
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
 - Baseline CV accuracy: 100.0%
 - Baseline CV misses: 0
 
 Per-type baseline accuracy:
-- Unified: `message 100.0%`, `url 93.8%`
+- Unified: `message 100.0%`, `url 100.0%`
 - Separate: `message 100.0%`, `url 100.0%`
 ```
 
@@ -105,9 +105,9 @@ The heuristic currently wins on the small calibration set because those examples
 were designed around known rules. The baseline improved after adding targeted
 examples, but it is still experimental. It proves that the signal table can feed
 a model, and it gives CyberLureAI a repeatable way to compare future model
-improvements against the explainable heuristic path. At the moment, separate
-models perform better overall than one shared model. The current separate URL
-and message baselines have no cross-validation misses on the calibration set,
-while the unified model still misses several suspicious brand impersonation URL
-examples. Keep the heuristic API path in place and treat the saved baseline
-models as local experiments until the dataset is larger and more representative.
+improvements against the explainable heuristic path. The current unified and
+separate-by-type baselines have no cross-validation misses on the calibration
+set after targeted examples for brand impersonation URLs, nearby `review` URL
+controls, deep phishing chains, and sensitive-code messages. Keep the heuristic
+API path in place and treat the saved baseline models as local experiments
+until the dataset is larger and more representative.
