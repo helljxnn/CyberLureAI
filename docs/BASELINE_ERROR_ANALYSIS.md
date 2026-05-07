@@ -121,17 +121,37 @@ Current unified-model misses:
 
 Current separate-model misses: none.
 
+## Fifth Calibration Result
+
+After expanding the brand impersonation URL family, adding nearby `review`
+controls for account/update/login and multi-subdomain URLs, and reinforcing
+deep-chain and sensitive-code suspicious examples:
+
+```text
+Calibration examples: 178
+Feature columns: 30
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 100.0%
+Unified baseline misses: 0
+Separate baseline accuracy: 100.0%
+Separate baseline misses: 0
+```
+
+Current unified-model misses: none.
+
+Current separate-model misses: none.
+
 ## Unified Vs Separate Models
 
 Current comparison:
 
 ```text
-Unified baseline accuracy: 96.6%
+Unified baseline accuracy: 100.0%
 Separate baseline accuracy: 100.0%
 
 Unified per-type accuracy:
 - message: 100.0%
-- url: 93.8%
+- url: 100.0%
 
 Separate per-type accuracy:
 - message: 100.0%
@@ -142,21 +162,23 @@ Interpretation:
 
 - The added targeted examples removed the previous separate-model misses around
   hyphen-heavy account URLs and legitimate delivery verification messages.
-- Separate URL and message baselines are now clearly stronger than the unified
-  experimental model on the current calibration set.
-- The unified model now concentrates its misses in suspicious brand
-  impersonation URLs, which reinforces keeping URL and message behavior
-  evaluated separately.
+- A fifth targeted pass added more suspicious brand impersonation URL variants,
+  nearby `review` URL controls, deep phishing chains, and sensitive-code message
+  examples.
+- The current calibration set has no cross-validation misses for either the
+  unified or separate-by-type baseline strategy.
+- Keep comparing unified and separate baselines side by side because the dataset
+  is still intentionally small and highly curated.
 
 ## Next Data Priorities
 
-- Add more suspicious brand impersonation URL variants while keeping nearby
-  benign `review` account/update URL controls.
+- Add fresh brand impersonation, deep-chain, shortener, and sensitive-code
+  examples only when they represent new user-facing patterns.
 - Add new delivery/contact verification examples only when fresh user-facing
   patterns appear, since the current separate message baseline has no misses.
-- Keep watching for `suspicious` shortener-plus-banking and deep-chain phishing
-  regressions as the dataset grows.
+- Keep watching for `suspicious` shortener-plus-banking, deep-chain phishing,
+  and account-code regressions as the dataset grows.
 - Keep heuristic and baseline results side by side until the dataset is larger
   and model metrics are less sensitive to individual examples.
-- Treat separate URL and message baselines as the stronger experimental default
-  for future comparisons.
+- Treat both baseline strategies as experimental comparisons; the heuristic API
+  behavior remains the primary user-facing path.
