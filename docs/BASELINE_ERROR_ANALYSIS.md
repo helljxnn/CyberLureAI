@@ -141,6 +141,26 @@ Current unified-model misses: none.
 
 Current separate-model misses: none.
 
+## Sixth Calibration Result
+
+After adding 40 bilingual calibration examples focused on realistic safe
+messages, trusted-account URLs, shortener-only review cases, code/contact review
+messages, and nearby suspicious controls:
+
+```text
+Calibration examples: 218
+Feature columns: 30
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 100.0%
+Unified baseline misses: 0
+Separate baseline accuracy: 100.0%
+Separate baseline misses: 0
+```
+
+Current unified-model misses: none.
+
+Current separate-model misses: none.
+
 ## Unified Vs Separate Models
 
 Current comparison:
@@ -165,6 +185,8 @@ Interpretation:
 - A fifth targeted pass added more suspicious brand impersonation URL variants,
   nearby `review` URL controls, deep phishing chains, and sensitive-code message
   examples.
+- A sixth targeted pass added bilingual realistic examples, especially
+  `likely_safe` cases, to reduce overfitting to suspicious and review patterns.
 - The current calibration set has no cross-validation misses for either the
   unified or separate-by-type baseline strategy.
 - Keep comparing unified and separate baselines side by side because the dataset
@@ -178,6 +200,8 @@ Interpretation:
   patterns appear, since the current separate message baseline has no misses.
 - Keep watching for `suspicious` shortener-plus-banking, deep-chain phishing,
   and account-code regressions as the dataset grows.
+- Keep adding benign bilingual examples with ordinary support, delivery,
+  invoice, and meeting language so `likely_safe` remains well represented.
 - Keep heuristic and baseline results side by side until the dataset is larger
   and model metrics are less sensitive to individual examples.
 - Treat both baseline strategies as experimental comparisons; the heuristic API

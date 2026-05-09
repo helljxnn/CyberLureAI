@@ -67,3 +67,23 @@ suspicious_refund_lure,"Claim your refund bonus now at www.refund-prize.example 
 suspicious_delivery_lockout,"Urgent: your delivery account is locked today. Verify now at https://bit.ly/delivery-unlock",suspicious,account_restriction_threat
 suspicious_bank_code_shortlink,"Security alert: bank access is blocked today. Use code 864200 at https://tinyurl.com/bank-unlock",suspicious,account_restriction_threat
 suspicious_delivery_code_threat,"Security alert: delivery access is blocked today. Use code 642086 at https://bit.ly/delivery-access",suspicious,account_restriction_threat
+safe_reunion_soporte,"Hola, confirmo la reunion con soporte para manana a las nueve.",likely_safe,no_strong_indicators
+safe_entrega_factura,"La factura de la entrega quedo registrada en el portal interno.",likely_safe,no_strong_indicators
+safe_colombia_agenda_link,"Agenda de la reunion: https://example.com/equipo/agenda",likely_safe,contains_link
+safe_training_soporte_link,"Material de soporte para la capacitacion: https://example.com/soporte",likely_safe,contains_link
+safe_invoice_portal_link,"Your invoice is ready in the customer portal: https://example.com/invoices",likely_safe,contains_link
+safe_delivery_tracking_link,"Track tomorrow's delivery at https://example.com/tracking",likely_safe,contains_link
+safe_security_reminder,"Reminder: keep personal information private during support calls.",likely_safe,no_strong_indicators
+safe_helpdesk_ticket,"The helpdesk ticket was updated by soporte interno.",likely_safe,no_strong_indicators
+safe_project_status,"Project status update: the deployment window starts tomorrow.",likely_safe,no_strong_indicators
+safe_access_badge_notice,"Your office access badge is ready at reception.",likely_safe,no_strong_indicators
+safe_billing_question,"Can you review the billing question before the client call?",likely_safe,no_strong_indicators
+safe_soporte_followup,"Soporte confirmo que el caso quedo cerrado esta tarde.",likely_safe,no_strong_indicators
+review_colombia_short_event,"Revisa los detalles del evento en https://bit.ly/evento-equipo",review,shortened_link
+review_codigo_acceso_portal,"Use code 274815 to finish portal sign in.",review,code_like_number
+review_verify_contact_support,"Please verify the support contact at https://example.com/contact",review,sensitive_information_request
+review_limited_time_training,"Limited time: review the training schedule at https://example.com/training",review,scam_phrase
+suspicious_banco_shortlink,"Urgent: your bank account is blocked today. Verify now at https://bit.ly/banco-ayuda",suspicious,account_restriction_threat
+suspicious_codigo_credenciales,"Security alert: verify your credentials now with code 914602",suspicious,sensitive_information_request
+suspicious_refund_bonus_colombia,"Winner!!! Claim your refund bonus now at www.bono-reclamo.example with PIN 528416",suspicious,reward_lure
+suspicious_delivery_account_lock,"Urgent: your delivery account is locked today. Use code 750193 at https://tinyurl.com/entrega-unlock",suspicious,account_restriction_threat
