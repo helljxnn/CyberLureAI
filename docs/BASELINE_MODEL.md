@@ -48,14 +48,14 @@ Current local result:
 
 ```text
 Unified baseline:
-- Calibration examples: 218
+- Calibration examples: 222
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
 - Baseline CV accuracy: 100.0%
 - Baseline CV misses: 0
 
 Separate baselines by type:
-- Calibration examples: 218
+- Calibration examples: 222
 - Feature columns: 30
 - Heuristic accuracy: 100.0%
 - Baseline CV accuracy: 100.0%
@@ -108,6 +108,7 @@ a model, and it gives CyberLureAI a repeatable way to compare future model
 improvements against the explainable heuristic path. The current unified and
 separate-by-type baselines have no cross-validation misses on the calibration
 set after targeted examples for brand impersonation URLs, nearby `review` URL
-controls, deep phishing chains, sensitive-code messages, and bilingual safe
-examples. Keep the heuristic API path in place and treat the saved baseline
-models as local experiments until the dataset is larger and more representative.
+controls, deep phishing chains, sensitive-code messages, bilingual safe
+examples, and Spanish-language social engineering terms. Keep the heuristic API
+path in place and treat the saved baseline models as local experiments until
+the dataset is larger and more representative.
