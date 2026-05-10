@@ -5,56 +5,55 @@ const HISTORY_KEY = "cyberlureai.analysisHistory";
 const HISTORY_LIMIT = 6;
 const URL_EXAMPLES = [
   {
-    label: "Trusted site",
+    label: "Trusted help",
     tone: "low",
     hint: "Expected: likely safe",
-    value: "https://www.openai.com",
+    value: "https://www.gov.co/servicios-y-tramites",
   },
   {
-    label: "Review URL",
+    label: "Portal update",
     tone: "medium",
     hint: "Expected: needs review",
     value: "https://account-update-center.example.org",
   },
   {
-    label: "Short link",
+    label: "Short link ES",
     tone: "medium",
     hint: "Expected: needs review",
-    value: "https://bit.ly/account-update",
+    value: "https://bit.ly/actualizacion-reunion",
   },
   {
-    label: "Bank warning",
+    label: "Bank warning ES",
     tone: "high",
     hint: "Expected: suspicious",
-    value: "http://bank-account-verify-login.example.com",
+    value: "https://bit.ly/bank-account-verify-login-colombia",
   },
 ];
 const MESSAGE_EXAMPLES = [
   {
-    label: "Meeting note",
+    label: "Reunion segura",
     tone: "low",
     hint: "Expected: likely safe",
-    value: "Hi, just checking in to confirm our meeting tomorrow.",
+    value: "Hola, confirmo la reunion con soporte para manana a las nueve.",
   },
   {
-    label: "Delivery check",
+    label: "Codigo entrega",
     tone: "medium",
     hint: "Expected: needs review",
-    value:
-      "Please verify the delivery address today at https://example.com/address-check",
+    value: "Tu codigo 123456 para recoger el paquete vence al final del dia.",
   },
   {
-    label: "Account threat",
+    label: "Cuenta bloqueada",
     tone: "high",
     hint: "Expected: suspicious",
     value:
-      "Security alert: your account will be locked today. Verify now at https://bit.ly/secure-login",
+      "Urgente: tu cuenta del banco fue bloqueada hoy. Verifica ahora en https://bit.ly/banco-ayuda",
   },
   {
-    label: "Prize lure",
+    label: "Premio falso",
     tone: "high",
     hint: "Expected: suspicious",
-    value: "Winner!!! Claim your bonus now at www.reward-center.example with code 884422",
+    value: "Ganador!!! Reclama tu premio ahora en www.premio-centro.example con codigo 481920",
   },
 ];
 const RISK_METADATA = {
@@ -81,6 +80,18 @@ const VERDICT_LABELS = {
   likely_safe: "Likely safe",
   review: "Needs review",
   suspicious: "Suspicious",
+};
+const VERDICT_MEANINGS = {
+  likely_safe:
+    "The current rules did not find strong warning signs. Keep normal caution before sharing data.",
+  review:
+    "There are warning signs worth checking manually before clicking, replying, or entering information.",
+  suspicious:
+    "Treat this as unsafe. Verify through an official channel instead of trusting the message or link.",
+};
+const HISTORY_KIND_LABELS = {
+  URL: "URL check",
+  Message: "Message check",
 };
 const SAFE_CHECKLIST = {
   likely_safe: [
@@ -132,6 +143,7 @@ function createHistoryEntry(kind, input, data) {
     risk_score: data.risk_score,
     verdict: data.verdict,
     experimental_verdict: data.experimental_model?.verdict || null,
+    experimental_agrees: data.experimental_model?.agrees_with_heuristic ?? null,
     created_at: new Date().toLocaleString(),
   };
 }
@@ -149,6 +161,14 @@ function getRiskMetadata(riskLevel) {
 function formatVerdict(verdict) {
   const value = String(verdict || "unknown");
   return VERDICT_LABELS[value] || value.replaceAll("_", " ");
+}
+
+function getVerdictMeaning(verdict) {
+  return VERDICT_MEANINGS[verdict] || VERDICT_MEANINGS.review;
+}
+
+function formatHistoryKind(kind) {
+  return HISTORY_KIND_LABELS[kind] || kind;
 }
 
 function getSafeChecklist(verdict) {
@@ -246,6 +266,7 @@ function ResultPanel({ title, state }) {
   const signals = Array.isArray(state.data.signals) ? state.data.signals : [];
   const checklist = getSafeChecklist(state.data.verdict);
   const experimentalModel = state.data.experimental_model;
+  const modelDisagrees = experimentalModel?.agrees_with_heuristic === false;
 
   return (
     <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
@@ -260,6 +281,10 @@ function ResultPanel({ title, state }) {
         <span style={{ width: `${score}%` }} />
       </div>
       <p className="result-summary">{risk.summary}</p>
+      <div className="verdict-meaning">
+        <span>{formatVerdict(state.data.verdict)}</span>
+        <p>{getVerdictMeaning(state.data.verdict)}</p>
+      </div>
       <div className="result-meta result-meta-grid">
         <span className={`pill ${riskClass}`}>Risk: {risk.label}</span>
         <span className={`pill ${riskClass}`}>Verdict: {formatVerdict(state.data.verdict)}</span>
@@ -274,6 +299,11 @@ function ResultPanel({ title, state }) {
       {experimentalModel && (
         <>
           <h3>Experimental model</h3>
+          <p className={modelDisagrees ? "model-note model-warning" : "model-note"}>
+            {modelDisagrees
+              ? "The experimental model disagrees with the explainable heuristic. Use the heuristic verdict as the user-facing decision for now."
+              : "The experimental model agrees with the explainable heuristic for this check."}
+          </p>
           <div className="model-comparison">
             <div>
               <span className="comparison-label">Strategy</span>
@@ -617,9 +647,9 @@ export default function App() {
                 return (
                   <article className="history-item" data-risk={item.risk_level} key={item.id}>
                     <div>
-                      <span className="history-kind">{item.kind}</span>
+                      <span className="history-kind">{formatHistoryKind(item.kind)}</span>
                       <h3>
-                        {itemRisk.label} | {item.risk_score}/100
+                        {formatHistoryKind(item.kind)} | {itemRisk.label} | {item.risk_score}/100
                       </h3>
                       <p>{item.input}</p>
                       <span className="history-time">{item.created_at}</span>
@@ -627,8 +657,13 @@ export default function App() {
                     <div className="history-actions">
                       <span className={`pill ${itemRiskClass}`}>{formatVerdict(item.verdict)}</span>
                       {item.experimental_verdict && (
-                        <span className="pill pill-neutral">
-                          Model: {formatVerdict(item.experimental_verdict)}
+                        <span
+                          className={`pill ${
+                            item.experimental_agrees === false ? "pill-risk-medium" : "pill-neutral"
+                          }`}
+                        >
+                          {item.experimental_agrees === false ? "Model differs: " : "Model: "}
+                          {formatVerdict(item.experimental_verdict)}
                         </span>
                       )}
                       <button
