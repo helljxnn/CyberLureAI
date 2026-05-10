@@ -67,6 +67,20 @@ def test_message_analyzer_flags_social_engineering_message() -> None:
     assert any(signal.code == "sensitive_information_request" for signal in result.signals)
 
 
+def test_message_analyzer_flags_spanish_terms_with_accents() -> None:
+    result = analyze_message(
+        "Urgente: tu cuenta del banco fue bloqueada hoy. "
+        "Verifica ahora con este código: 123456"
+    )
+
+    assert result.risk_level == "high"
+    assert result.verdict == "suspicious"
+    assert result.risk_score >= 70
+    assert any(signal.code == "urgency_pressure" for signal in result.signals)
+    assert any(signal.code == "sensitive_information_request" for signal in result.signals)
+    assert any(signal.code == "account_restriction_threat" for signal in result.signals)
+
+
 def test_message_analyzer_flags_shortened_link_and_account_threat() -> None:
     result = analyze_message(
         "Security alert: your account will be locked today. "

@@ -161,6 +161,25 @@ Current unified-model misses: none.
 
 Current separate-model misses: none.
 
+## Seventh Calibration Result
+
+After adding Spanish-language message signals for urgency, credentials, account
+threats, rewards, and code-like numbers:
+
+```text
+Calibration examples: 222
+Feature columns: 30
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 100.0%
+Unified baseline misses: 0
+Separate baseline accuracy: 100.0%
+Separate baseline misses: 0
+```
+
+Current unified-model misses: none.
+
+Current separate-model misses: none.
+
 ## Unified Vs Separate Models
 
 Current comparison:
@@ -187,6 +206,8 @@ Interpretation:
   examples.
 - A sixth targeted pass added bilingual realistic examples, especially
   `likely_safe` cases, to reduce overfitting to suspicious and review patterns.
+- A seventh targeted pass added Spanish-language social engineering terms with
+  accent normalization, without introducing calibration misses.
 - The current calibration set has no cross-validation misses for either the
   unified or separate-by-type baseline strategy.
 - Keep comparing unified and separate baselines side by side because the dataset

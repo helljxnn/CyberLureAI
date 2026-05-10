@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 from backend.app.schemas.analysis_signal import AnalysisSignal
 from backend.app.services.features.common import add_signal
@@ -6,23 +7,93 @@ from backend.app.services.features.common import add_signal
 
 SUSPICIOUS_PATTERNS = (
     "urgent",
+    "urgente",
     "verify your account",
+    "verifica tu cuenta",
+    "verificar tu cuenta",
     "click here",
+    "haz clic",
     "limited time",
+    "tiempo limitado",
     "bank",
+    "banco",
     "password",
+    "contrasena",
     "security alert",
+    "alerta de seguridad",
     "suspend",
+    "suspender",
+    "suspendida",
+    "bloqueada",
     "winner",
+    "ganador",
     "claim",
+    "reclama",
     "otp",
     "code",
+    "codigo",
+    "clave",
     "gift",
+    "regalo",
+    "premio",
 )
-URGENCY_TERMS = ("urgent", "immediately", "now", "asap", "today", "last chance")
-SENSITIVE_TERMS = ("password", "code", "otp", "pin", "verify", "credentials")
-THREAT_TERMS = ("suspend", "suspended", "locked", "blocked", "disabled", "expire")
-REWARD_TERMS = ("winner", "claim", "gift", "prize", "bonus", "refund", "reward")
+URGENCY_TERMS = (
+    "urgent",
+    "urgente",
+    "immediately",
+    "inmediatamente",
+    "now",
+    "ahora",
+    "asap",
+    "today",
+    "hoy",
+    "last chance",
+    "ultima oportunidad",
+)
+SENSITIVE_TERMS = (
+    "password",
+    "contrasena",
+    "code",
+    "codigo",
+    "otp",
+    "pin",
+    "clave",
+    "verify",
+    "verifica",
+    "verificar",
+    "credentials",
+    "credenciales",
+)
+THREAT_TERMS = (
+    "suspend",
+    "suspended",
+    "suspendido",
+    "suspendida",
+    "locked",
+    "blocked",
+    "bloqueado",
+    "bloqueada",
+    "disabled",
+    "expire",
+    "expira",
+    "vencera",
+)
+REWARD_TERMS = (
+    "winner",
+    "ganador",
+    "claim",
+    "reclama",
+    "gift",
+    "regalo",
+    "prize",
+    "premio",
+    "bonus",
+    "bono",
+    "refund",
+    "reembolso",
+    "reward",
+    "recompensa",
+)
 SHORTENER_DOMAINS = (
     "bit.ly",
     "tinyurl.com",
@@ -40,8 +111,13 @@ URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s]+", re.IGNORECASE)
 ONE_TIME_CODE_PATTERN = re.compile(r"\b\d{4,8}\b")
 
 
+def _normalize_for_matching(text: str) -> str:
+    normalized = unicodedata.normalize("NFKD", text.lower())
+    return "".join(character for character in normalized if not unicodedata.combining(character))
+
+
 def extract_message_signals(message: str) -> list[AnalysisSignal]:
-    lowered_message = message.lower()
+    lowered_message = _normalize_for_matching(message)
     links = URL_PATTERN.findall(lowered_message)
     signals: list[AnalysisSignal] = []
 
@@ -109,7 +185,7 @@ def extract_message_signals(message: str) -> list[AnalysisSignal]:
         )
 
     if ONE_TIME_CODE_PATTERN.search(message) and any(
-        word in lowered_message for word in ("code", "otp", "pin")
+        word in lowered_message for word in ("code", "codigo", "otp", "pin", "clave")
     ):
         add_signal(
             signals,

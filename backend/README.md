@@ -139,6 +139,7 @@ Current message signals include:
 - account restriction threats
 - reward or prize language
 - code-like numbers used with verification language
+- Spanish-language equivalents for common social engineering terms, including accent-normalized matching
 
 Responses include:
 

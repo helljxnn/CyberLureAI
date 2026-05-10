@@ -23,9 +23,9 @@ Run the default calibration summary from the project root:
 Current local calibration summary:
 
 ```text
-Calibration examples: 218
-Verdict matches: 218
-Expected signal matches: 218
+Calibration examples: 222
+Verdict matches: 222
+Expected signal matches: 222
 False positives: 0
 False negatives: 0
 ```
