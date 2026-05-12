@@ -40,6 +40,15 @@ BRAND_TRUSTED_ROOTS = {
     "paypal": "paypal.com",
     "whatsapp": "whatsapp.com",
 }
+LOOKALIKE_TRANSLATION = str.maketrans(
+    {
+        "0": "o",
+        "1": "l",
+        "3": "e",
+        "4": "a",
+        "5": "s",
+    }
+)
 
 
 def _root_domain(hostname: str) -> str:
@@ -57,6 +66,10 @@ def _is_ip_address(hostname: str) -> bool:
     return True
 
 
+def _normalize_lookalike_text(value: str) -> str:
+    return value.replace("rn", "m").translate(LOOKALIKE_TRANSLATION)
+
+
 def extract_url_signals(url: str) -> list[AnalysisSignal]:
     lowered_url = url.lower()
     parsed_url = urlparse(lowered_url)
@@ -70,6 +83,14 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
         brand
         for brand, trusted_root in BRAND_TRUSTED_ROOTS.items()
         if brand in normalized_hostname and root_domain != trusted_root
+    ]
+    lookalike_hostname = _normalize_lookalike_text(normalized_hostname)
+    lookalike_brand_hits = [
+        brand
+        for brand, trusted_root in BRAND_TRUSTED_ROOTS.items()
+        if brand not in normalized_hostname
+        and brand in lookalike_hostname
+        and root_domain != trusted_root
     ]
 
     if "@" in lowered_url:
@@ -151,6 +172,15 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             "high",
             25,
             "The URL appears to combine a known brand name with an untrusted domain.",
+        )
+
+    if lookalike_brand_hits:
+        add_signal(
+            signals,
+            "brand_lookalike_domain",
+            "high",
+            40,
+            "The URL appears to imitate a known brand with lookalike characters.",
         )
 
     if parsed_url.scheme == "http":

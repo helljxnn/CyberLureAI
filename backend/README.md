@@ -74,6 +74,7 @@ Current URL signals include:
 - IP-address destinations
 - excessive subdomains
 - brand names combined with untrusted domains
+- brand lookalike domains using common character substitutions
 - patterns such as `@` and repeated hyphens
 
 Responses include:

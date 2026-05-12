@@ -55,6 +55,32 @@ def test_url_analyzer_flags_brand_impersonation_patterns() -> None:
     assert any(signal.code == "brand_impersonation" for signal in result.signals)
 
 
+def test_url_analyzer_flags_simple_brand_lookalikes_for_review() -> None:
+    result = analyze_url("https://paypa1.example.com")
+
+    assert result.risk_level == "medium"
+    assert result.verdict == "review"
+    assert any(signal.code == "brand_lookalike_domain" for signal in result.signals)
+
+
+def test_url_analyzer_flags_brand_lookalikes_with_keywords_as_high_risk() -> None:
+    result = analyze_url("https://g00gle-account.example.com/login")
+
+    assert result.risk_level == "high"
+    assert result.verdict == "suspicious"
+    assert any(signal.code == "brand_lookalike_domain" for signal in result.signals)
+    assert any(signal.code == "phishing_keywords" for signal in result.signals)
+
+
+def test_url_analyzer_does_not_flag_trusted_brand_roots_as_lookalikes() -> None:
+    result = analyze_url("https://www.paypal.com")
+
+    signal_codes = {signal.code for signal in result.signals}
+
+    assert result.verdict == "likely_safe"
+    assert "brand_lookalike_domain" not in signal_codes
+
+
 def test_message_analyzer_flags_social_engineering_message() -> None:
     result = analyze_message(
         "Urgent!!! Verify your account now using this code: 123456"

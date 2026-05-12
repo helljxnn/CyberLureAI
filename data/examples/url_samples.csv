@@ -129,3 +129,11 @@ suspicious_bancolombia_client_verify,https://bancolombia-clientes-verify.example
 suspicious_shortener_banco_colombia,https://bit.ly/bank-account-verify-login-colombia,suspicious,link_shortener
 suspicious_microsoft_billing_lock,https://microsoft-billing-secure.example.net/login,suspicious,brand_impersonation
 suspicious_http_update_verify_colombia,http://secure-bank-update-verify.example.org/account,suspicious,http_with_phishing_terms
+safe_paypal_home,https://www.paypal.com,likely_safe,no_strong_indicators
+safe_google_home,https://www.google.com,likely_safe,no_strong_indicators
+safe_microsoft_home,https://www.microsoft.com,likely_safe,no_strong_indicators
+safe_bancolombia_home,https://www.bancolombia.com,likely_safe,no_strong_indicators
+review_paypal_lookalike,https://paypa1.example.com,review,brand_lookalike_domain
+suspicious_google_lookalike_account,https://g00gle-account.example.com/login,suspicious,brand_lookalike_domain
+suspicious_microsoft_lookalike_secure,https://micros0ft-secure.example.net,suspicious,brand_lookalike_domain
+suspicious_bancolombia_lookalike_update,https://bancolornbia-update.example.org/account,suspicious,brand_lookalike_domain
