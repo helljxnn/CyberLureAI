@@ -180,21 +180,48 @@ Current unified-model misses: none.
 
 Current separate-model misses: none.
 
+## Eighth Calibration Result
+
+After adding a URL lookalike signal for brand-like domains using common
+character substitutions such as `0`, `1`, and `rn`:
+
+```text
+Calibration examples: 230
+Feature columns: 31
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 99.6%
+Unified baseline misses: 1
+Separate baseline accuracy: 99.6%
+Separate baseline misses: 1
+```
+
+Current unified-model misses:
+
+| Sample | Expected | Baseline | Pattern |
+| --- | --- | --- | --- |
+| `review_paypal_lookalike` | `review` | `suspicious` | A simple lookalike-only URL is intentionally cautionary, while the model treats the new signal as high risk. |
+
+Current separate-model misses:
+
+| Sample | Expected | Baseline | Pattern |
+| --- | --- | --- | --- |
+| `review_paypal_lookalike` | `review` | `suspicious` | The separate URL model also overweights the new lookalike signal without nearby review variants. |
+
 ## Unified Vs Separate Models
 
 Current comparison:
 
 ```text
-Unified baseline accuracy: 100.0%
-Separate baseline accuracy: 100.0%
+Unified baseline accuracy: 99.6%
+Separate baseline accuracy: 99.6%
 
 Unified per-type accuracy:
 - message: 100.0%
-- url: 100.0%
+- url: 99.3%
 
 Separate per-type accuracy:
 - message: 100.0%
-- url: 100.0%
+- url: 99.3%
 ```
 
 Interpretation:
@@ -208,8 +235,8 @@ Interpretation:
   `likely_safe` cases, to reduce overfitting to suspicious and review patterns.
 - A seventh targeted pass added Spanish-language social engineering terms with
   accent normalization, without introducing calibration misses.
-- The current calibration set has no cross-validation misses for either the
-  unified or separate-by-type baseline strategy.
+- An eighth targeted pass added URL lookalike detection and surfaced one model
+  miss where a simple lookalike-only URL is expected to stay in `review`.
 - Keep comparing unified and separate baselines side by side because the dataset
   is still intentionally small and highly curated.
 
@@ -221,6 +248,8 @@ Interpretation:
   patterns appear, since the current separate message baseline has no misses.
 - Keep watching for `suspicious` shortener-plus-banking, deep-chain phishing,
   and account-code regressions as the dataset grows.
+- Add nearby `review` lookalike variants so the baseline learns the boundary
+  between cautionary lookalike URLs and high-risk lookalike phishing clusters.
 - Keep adding benign bilingual examples with ordinary support, delivery,
   invoice, and meeting language so `likely_safe` remains well represented.
 - Keep heuristic and baseline results side by side until the dataset is larger
