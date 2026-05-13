@@ -48,22 +48,22 @@ Current local result:
 
 ```text
 Unified baseline:
-- Calibration examples: 230
+- Calibration examples: 246
 - Feature columns: 31
 - Heuristic accuracy: 100.0%
-- Baseline CV accuracy: 99.6%
-- Baseline CV misses: 1
+- Baseline CV accuracy: 100.0%
+- Baseline CV misses: 0
 
 Separate baselines by type:
-- Calibration examples: 230
+- Calibration examples: 246
 - Feature columns: 31
 - Heuristic accuracy: 100.0%
-- Baseline CV accuracy: 99.6%
-- Baseline CV misses: 1
+- Baseline CV accuracy: 100.0%
+- Baseline CV misses: 0
 
 Per-type baseline accuracy:
-- Unified: `message 100.0%`, `url 99.3%`
-- Separate: `message 100.0%`, `url 99.3%`
+- Unified: `message 100.0%`, `url 100.0%`
+- Separate: `message 100.0%`, `url 100.0%`
 ```
 
 ## Export Predictions
@@ -101,12 +101,12 @@ experiments only until the project has a larger and more representative dataset.
 
 ## Interpretation
 
-The heuristic currently wins on the small calibration set because those examples
-were designed around known rules. The baseline improved after adding targeted
-examples, but it is still experimental. It proves that the signal table can feed
-a model, and it gives CyberLureAI a repeatable way to compare future model
-improvements against the explainable heuristic path. The current unified and
-separate-by-type baselines have one cross-validation miss on the calibration set
-after adding a brand-lookalike URL signal; the heuristic path still has no
-misses. Keep the heuristic API path in place and treat the saved baseline models
-as local experiments until the dataset is larger and more representative.
+The heuristic currently wins as the primary API behavior because the calibration
+set is still small and designed around known rules. The baseline improved after
+adding targeted examples, but it is still experimental. It proves that the signal
+table can feed a model, and it gives CyberLureAI a repeatable way to compare
+future model improvements against the explainable heuristic path. The current
+unified and separate-by-type baselines have no cross-validation misses after
+adding nearby lookalike URL examples. Keep the heuristic API path in place and
+treat the saved baseline models as local experiments until the dataset is larger
+and more representative.
