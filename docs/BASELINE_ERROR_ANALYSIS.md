@@ -207,21 +207,41 @@ Current separate-model misses:
 | --- | --- | --- | --- |
 | `review_paypal_lookalike` | `review` | `suspicious` | The separate URL model also overweights the new lookalike signal without nearby review variants. |
 
+## Ninth Calibration Result
+
+After adding nearby `review` lookalike URLs and stronger suspicious lookalike
+controls that combine lookalike domains with phishing terms, HTTP, or deep
+subdomain chains:
+
+```text
+Calibration examples: 246
+Feature columns: 31
+Heuristic accuracy: 100.0%
+Unified baseline accuracy: 100.0%
+Unified baseline misses: 0
+Separate baseline accuracy: 100.0%
+Separate baseline misses: 0
+```
+
+Current unified-model misses: none.
+
+Current separate-model misses: none.
+
 ## Unified Vs Separate Models
 
 Current comparison:
 
 ```text
-Unified baseline accuracy: 99.6%
-Separate baseline accuracy: 99.6%
+Unified baseline accuracy: 100.0%
+Separate baseline accuracy: 100.0%
 
 Unified per-type accuracy:
 - message: 100.0%
-- url: 99.3%
+- url: 100.0%
 
 Separate per-type accuracy:
 - message: 100.0%
-- url: 99.3%
+- url: 100.0%
 ```
 
 Interpretation:
@@ -237,6 +257,8 @@ Interpretation:
   accent normalization, without introducing calibration misses.
 - An eighth targeted pass added URL lookalike detection and surfaced one model
   miss where a simple lookalike-only URL is expected to stay in `review`.
+- A ninth targeted pass added nearby lookalike examples and removed the
+  lookalike-only miss without changing heuristic API behavior.
 - Keep comparing unified and separate baselines side by side because the dataset
   is still intentionally small and highly curated.
 
@@ -248,8 +270,8 @@ Interpretation:
   patterns appear, since the current separate message baseline has no misses.
 - Keep watching for `suspicious` shortener-plus-banking, deep-chain phishing,
   and account-code regressions as the dataset grows.
-- Add nearby `review` lookalike variants so the baseline learns the boundary
-  between cautionary lookalike URLs and high-risk lookalike phishing clusters.
+- Keep adding nearby `review` and `suspicious` lookalike variants when new brand
+  substitution patterns appear.
 - Keep adding benign bilingual examples with ordinary support, delivery,
   invoice, and meeting language so `likely_safe` remains well represented.
 - Keep heuristic and baseline results side by side until the dataset is larger
