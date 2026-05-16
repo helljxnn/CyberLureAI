@@ -14,6 +14,9 @@ SUSPICIOUS_KEYWORDS = (
     "confirm",
     "signin",
     "bank",
+    "redirect",
+    "payment",
+    "validate",
 )
 SHORTENER_DOMAINS = {
     "bit.ly",
@@ -27,6 +30,24 @@ SHORTENER_DOMAINS = {
     "rebrand.ly",
     "shorturl.at",
     "lnkd.in",
+}
+SUSPICIOUS_TLDS = {
+    "xyz",
+    "top",
+    "work",
+    "click",
+    "link",
+    "online",
+    "site",
+    "website",
+    "space",
+    "live",
+    "club",
+    "gq",
+    "ml",
+    "cf",
+    "ga",
+    "tk",
 }
 BRAND_TRUSTED_ROOTS = {
     "amazon": "amazon.com",
@@ -118,6 +139,16 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             "high",
             35,
             "The URL uses an IP address instead of a recognizable domain name.",
+        )
+
+    tld = host_labels[-1] if host_labels else ""
+    if tld.lower() in SUSPICIOUS_TLDS:
+        add_signal(
+            signals,
+            "suspicious_tld",
+            "medium",
+            15,
+            f"The URL uses an uncommon top-level domain (.{tld}) frequently associated with phishing.",
         )
 
     if hostname.count("-") >= 2:
