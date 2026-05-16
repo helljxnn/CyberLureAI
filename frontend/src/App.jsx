@@ -7,10 +7,12 @@ import HistoryPanel from "./components/HistoryPanel";
 import ResultPanel from "./components/ResultPanel";
 import {
   DEFAULT_API_URL,
+  MALWARE_EXAMPLES,
   MESSAGE_EXAMPLES,
   URL_EXAMPLES,
 } from "./config/analysisContent";
 import {
+  analyzeMalware,
   analyzeMessage,
   analyzeUrl,
   checkApiConnection,
@@ -33,6 +35,11 @@ const INITIAL_MESSAGE_RESULT = {
   message: "Run a message analysis to inspect social engineering indicators.",
 };
 
+const INITIAL_MALWARE_RESULT = {
+  kind: "empty",
+  message: "Paste PE header feature values (JSON) to detect malware with the ML classifier.",
+};
+
 export default function App() {
   const [apiBaseUrl, setApiBaseUrl] = useState(DEFAULT_API_URL);
   const [analysisHistory, setAnalysisHistory] = useState(loadAnalysisHistory);
@@ -42,12 +49,15 @@ export default function App() {
   });
   const [urlInput, setUrlInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
+  const [malwareInput, setMalwareInput] = useState("");
   const [urlResult, setUrlResult] = useState(INITIAL_URL_RESULT);
   const [messageResult, setMessageResult] = useState(INITIAL_MESSAGE_RESULT);
+  const [malwareResult, setMalwareResult] = useState(INITIAL_MALWARE_RESULT);
 
   const cleanBaseUrl = useMemo(() => apiBaseUrl.trim().replace(/\/+$/, ""), [apiBaseUrl]);
   const isUrlLoading = urlResult.kind === "loading";
   const isMessageLoading = messageResult.kind === "loading";
+  const isMalwareLoading = malwareResult.kind === "loading";
 
   function addHistoryEntry(kind, input, data) {
     const entry = createHistoryEntry(kind, input, data);
@@ -125,6 +135,45 @@ export default function App() {
     }
   }
 
+  async function handleMalwareSubmit(event) {
+    event.preventDefault();
+    setMalwareResult({ kind: "loading", message: "Analyzing malware features..." });
+
+    let parsedFeatures;
+    try {
+      parsedFeatures = JSON.parse(malwareInput);
+    } catch {
+      setMalwareResult({
+        kind: "error",
+        message: "Invalid JSON. Paste a valid JSON object with PE header feature values.",
+        details: [],
+      });
+      return;
+    }
+
+    if (typeof parsedFeatures !== "object" || parsedFeatures === null || Array.isArray(parsedFeatures)) {
+      setMalwareResult({
+        kind: "error",
+        message: "Expected a JSON object with PE header feature names and values.",
+        details: [],
+      });
+      return;
+    }
+
+    try {
+      const data = await analyzeMalware(cleanBaseUrl, parsedFeatures);
+      setMalwareResult({ kind: "success", data });
+      addHistoryEntry("Malware", malwareInput.trim().substring(0, 80) + "...", data);
+    } catch (error) {
+      const parsed = parseAppError(error);
+      setMalwareResult({
+        kind: "error",
+        message: parsed.message,
+        details: parsed.details,
+      });
+    }
+  }
+
   return (
     <div className="page-shell">
       <header className="hero">
@@ -190,6 +239,29 @@ export default function App() {
           />
 
           <ResultPanel title="Message analysis failed" state={messageResult} />
+        </section>
+
+        <section className="card analysis-card">
+          <div className="card-header">
+            <p className="section-kicker">Malware detection</p>
+            <h2>PE header classifier</h2>
+          </div>
+
+          <AnalysisForm
+            actionLabel="Analyze file"
+            examples={MALWARE_EXAMPLES}
+            inputId="malware-input"
+            inputMode="textarea"
+            isLoading={isMalwareLoading}
+            label="Paste PE header features (JSON)"
+            loadingLabel="Analyzing..."
+            placeholder='{ "e_cblp": 144, "e_cp": 3, "packer_type": "NoPacker", ... }'
+            value={malwareInput}
+            onChange={setMalwareInput}
+            onSubmit={handleMalwareSubmit}
+          />
+
+          <ResultPanel title="Malware analysis failed" state={malwareResult} />
         </section>
 
         <EducationSection />

@@ -52,3 +52,14 @@ export function analyzeMessage(baseUrl, message) {
     body: JSON.stringify({ message }),
   });
 }
+
+export function analyzeMalware(baseUrl, features, filename = null) {
+  const body = { features };
+  if (filename) {
+    body.filename = filename;
+  }
+  return fetchJson(baseUrl, "/analyze/malware", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}

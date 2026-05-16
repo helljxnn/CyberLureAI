@@ -19,6 +19,7 @@ def root() -> dict[str, object]:
             "/health",
             "/analyze/url",
             "/analyze/message",
+            "/analyze/malware",
         ],
     }
 

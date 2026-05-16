@@ -20,6 +20,7 @@ def test_root_endpoint_returns_api_summary() -> None:
             "/health",
             "/analyze/url",
             "/analyze/message",
+            "/analyze/malware",
         ],
     }
 
