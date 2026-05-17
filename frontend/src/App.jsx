@@ -79,6 +79,11 @@ export default function App() {
       return;
     }
 
+    if (item.kind === "Malware") {
+      setMalwareInput(item.input);
+      return;
+    }
+
     setMessageInput(item.input);
   }
 

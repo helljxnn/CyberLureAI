@@ -38,6 +38,8 @@ class Settings:
     frontend_url: str
     data_dir: str
     openai_api_key: str
+    rate_limit: str
+    serve_frontend: bool
 
     @property
     def api_title(self) -> str:
@@ -56,4 +58,6 @@ def get_settings() -> Settings:
         frontend_url=getenv("FRONTEND_URL", "http://localhost:3000"),
         data_dir=getenv("DATA_DIR", "./data"),
         openai_api_key=getenv("OPENAI_API_KEY", ""),
+        rate_limit=getenv("RATE_LIMIT", "60/minute"),
+        serve_frontend=_get_bool_env("SERVE_FRONTEND", False),
     )

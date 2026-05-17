@@ -18,6 +18,11 @@ EXPERIMENTAL_MODEL_NOTE = (
 )
 
 
+def warm_up_baseline_model() -> None:
+    """Pre-load and cache the experimental baseline models at startup."""
+    _load_separate_baseline_bundle()
+
+
 def compare_with_experimental_baseline(
     *,
     sample_type: str,
