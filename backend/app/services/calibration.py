@@ -18,6 +18,10 @@ DEFAULT_SAMPLE_FILES = {
     "url": PROJECT_ROOT / "data" / "examples" / "url_samples.csv",
     "message": PROJECT_ROOT / "data" / "examples" / "message_samples.csv",
 }
+DEFAULT_ADVERSARIAL_SAMPLE_FILES = {
+    "url": PROJECT_ROOT / "data" / "examples" / "url_adversarial.csv",
+    "message": PROJECT_ROOT / "data" / "examples" / "message_adversarial.csv",
+}
 REQUIRED_SAMPLE_COLUMNS = {"sample_id", "input", "expected_verdict", "expected_signal"}
 VERDICT_RANKS = {
     "likely_safe": 0,
@@ -82,6 +86,8 @@ def load_labeled_examples(path: Path, sample_type: str) -> list[LabeledExample]:
 def evaluate_default_calibration() -> list[CalibrationResult]:
     results: list[CalibrationResult] = []
     for sample_type, path in DEFAULT_SAMPLE_FILES.items():
+        results.extend(evaluate_calibration_file(path, sample_type))
+    for sample_type, path in DEFAULT_ADVERSARIAL_SAMPLE_FILES.items():
         results.extend(evaluate_calibration_file(path, sample_type))
     return results
 
@@ -164,7 +170,11 @@ def _evaluate_labeled_example(example: LabeledExample) -> CalibrationResult:
     analyzer = _analyzer_for_sample_type(example.sample_type)
     analysis = analyzer(example.input_value)
     signal_codes = {signal.code for signal in analysis.signals}
-    expected_signal_found = example.expected_signal in signal_codes
+    expected_signals = _split_expected_signals(example.expected_signal)
+    expected_signal_found = (
+        not expected_signals
+        or any(signal in signal_codes for signal in expected_signals)
+    )
 
     return CalibrationResult(
         sample_type=example.sample_type,
@@ -200,6 +210,12 @@ def _verdict_rank(verdict: str) -> int:
         return VERDICT_RANKS[verdict]
     except KeyError as exc:
         raise ValueError(f"Unknown verdict: {verdict}") from exc
+
+
+def _split_expected_signals(expected_signal: str) -> set[str]:
+    if not expected_signal.strip():
+        return set()
+    return {signal.strip() for signal in expected_signal.split(",") if signal.strip()}
 
 
 def _analyzer_for_sample_type(sample_type: str) -> Analyzer:

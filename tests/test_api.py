@@ -161,3 +161,61 @@ def test_message_analysis_endpoint_trims_whitespace() -> None:
 
     assert response.status_code == 200
     assert body["message"] == "urgent verify your account now"
+
+
+def test_malware_analysis_endpoint_returns_expected_shape() -> None:
+    from backend.app.schemas.malware_analysis import MALWARE_FEATURE_EXAMPLE
+
+    response = client.post(
+        "/analyze/malware",
+        json={"features": MALWARE_FEATURE_EXAMPLE},
+    )
+
+    body = response.json()
+
+    assert response.status_code == 200
+    assert isinstance(body["is_malware"], bool)
+    assert isinstance(body["label"], str)
+    assert isinstance(body["confidence"], (int, float))
+    assert 0 <= body["confidence"] <= 1
+    assert isinstance(body["probabilities"], dict)
+    assert "benign" in body["probabilities"]
+    assert "malware" in body["probabilities"]
+    assert body["risk_level"] in {"low", "medium", "high"}
+    assert isinstance(body["risk_score"], int)
+    assert body["verdict"] in {"likely_safe", "review", "suspicious"}
+    assert isinstance(body["explanation"], str)
+    assert isinstance(body["recommended_action"], str)
+    assert isinstance(body["reasons"], list)
+    assert len(body["reasons"]) == 2
+    assert isinstance(body["signals"], list)
+    assert len(body["signals"]) == 3
+    assert body["experimental_model"] is None
+
+
+def test_malware_analysis_endpoint_rejects_empty_features() -> None:
+    response = client.post(
+        "/analyze/malware",
+        json={"features": {}},
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert isinstance(body["is_malware"], bool)
+    assert body["risk_level"] in {"low", "medium", "high"}
+    assert body["verdict"] in {"likely_safe", "review", "suspicious"}
+    assert isinstance(body["confidence"], (int, float))
+    assert "benign" in body["probabilities"]
+    assert "malware" in body["probabilities"]
+
+
+def test_malware_analysis_endpoint_rejects_invalid_features() -> None:
+    response = client.post(
+        "/analyze/malware",
+        json={"features": "not-a-dict"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"] == "validation_error"
