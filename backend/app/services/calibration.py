@@ -22,6 +22,10 @@ DEFAULT_ADVERSARIAL_SAMPLE_FILES = {
     "url": PROJECT_ROOT / "data" / "examples" / "url_adversarial.csv",
     "message": PROJECT_ROOT / "data" / "examples" / "message_adversarial.csv",
 }
+EXTERNAL_SAMPLE_FILES = {
+    "url": PROJECT_ROOT / "data" / "external" / "url_real.csv",
+    "message": PROJECT_ROOT / "data" / "external" / "message_real.csv",
+}
 REQUIRED_SAMPLE_COLUMNS = {"sample_id", "input", "expected_verdict", "expected_signal"}
 VERDICT_RANKS = {
     "likely_safe": 0,
@@ -89,6 +93,14 @@ def evaluate_default_calibration() -> list[CalibrationResult]:
         results.extend(evaluate_calibration_file(path, sample_type))
     for sample_type, path in DEFAULT_ADVERSARIAL_SAMPLE_FILES.items():
         results.extend(evaluate_calibration_file(path, sample_type))
+    return results
+
+
+def evaluate_external_calibration() -> list[CalibrationResult]:
+    results: list[CalibrationResult] = []
+    for sample_type, path in EXTERNAL_SAMPLE_FILES.items():
+        if path.exists():
+            results.extend(evaluate_calibration_file(path, sample_type))
     return results
 
 
@@ -280,6 +292,16 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Evaluate labeled calibration examples and export feature rows.",
     )
     parser.add_argument(
+        "--external",
+        action="store_true",
+        help="Use external real-world samples instead of hand-crafted ones.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Use both hand-crafted and external samples.",
+    )
+    parser.add_argument(
         "--report-csv",
         type=Path,
         help="Optional path for a CSV with per-example calibration results.",
@@ -294,7 +316,18 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _build_parser().parse_args()
-    results = evaluate_default_calibration()
+
+    if args.all:
+        results = evaluate_default_calibration() + evaluate_external_calibration()
+    elif args.external:
+        results = evaluate_external_calibration()
+    else:
+        results = evaluate_default_calibration()
+
+    if not results:
+        print("No calibration examples found.")
+        return
+
     summary = summarize_calibration_results(results)
 
     print(f"Calibration examples: {summary['total']}")

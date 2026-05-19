@@ -13,7 +13,7 @@ class URLAnalysisRequest(BaseModel):
 
 
 class URLAnalysisResponse(BaseModel):
-    url: HttpUrl
+    url: str
     risk_level: str
     risk_score: int
     verdict: str

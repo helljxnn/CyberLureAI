@@ -17,6 +17,14 @@ SUSPICIOUS_KEYWORDS = (
     "redirect",
     "payment",
     "validate",
+    "billing",
+    "recovery",
+    "unlock",
+    "restore",
+    "authorize",
+    "authenticate",
+    "service",
+    "admin",
 )
 SHORTENER_DOMAINS = {
     "bit.ly",
@@ -30,6 +38,13 @@ SHORTENER_DOMAINS = {
     "rebrand.ly",
     "shorturl.at",
     "lnkd.in",
+    "rb.gy",
+    "s4w.in",
+    "adf.ly",
+    "shorte.st",
+    "bc.vc",
+    "tiny.cc",
+    "soo.gd",
 }
 SUSPICIOUS_TLDS = {
     "xyz",
@@ -48,6 +63,17 @@ SUSPICIOUS_TLDS = {
     "cf",
     "ga",
     "tk",
+    "cfd",
+    "sbs",
+    "buzz",
+    "bid",
+    "icu",
+    "cyou",
+    "monster",
+    "quest",
+    "rest",
+    "bar",
+    "uno",
 }
 BRAND_TRUSTED_ROOTS = {
     "amazon": "amazon.com",
@@ -70,6 +96,32 @@ LOOKALIKE_TRANSLATION = str.maketrans(
         "5": "s",
     }
 )
+TRUSTED_TLDS = frozenset({
+    "edu",
+    "gov",
+    "mil",
+    "ac",
+    "edu.au",
+    "gov.au",
+    "ac.uk",
+    "gov.uk",
+    "edu.cn",
+    "gov.cn",
+    "edu.in",
+    "gov.in",
+    "edu.br",
+    "gov.br",
+    "edu.mx",
+    "gov.mx",
+})
+
+def _is_trusted_tld(host_labels: list[str]) -> bool:
+    if len(host_labels) < 2:
+        return False
+    two_label = ".".join(host_labels[-2:]).lower()
+    if two_label in TRUSTED_TLDS:
+        return True
+    return host_labels[-1].lower() in TRUSTED_TLDS
 
 
 def _root_domain(hostname: str) -> str:
@@ -93,7 +145,17 @@ def _normalize_lookalike_text(value: str) -> str:
 
 def extract_url_signals(url: str) -> list[AnalysisSignal]:
     lowered_url = url.lower()
-    parsed_url = urlparse(lowered_url)
+    try:
+        parsed_url = urlparse(lowered_url)
+    except ValueError:
+        return [
+            AnalysisSignal(
+                code="unparseable_url",
+                severity="medium",
+                score=15,
+                description="The URL could not be parsed (malformed syntax).",
+            )
+        ]
     hostname = parsed_url.hostname or ""
     normalized_hostname = hostname.removeprefix("www.")
     host_labels = [label for label in hostname.split(".") if label]
@@ -178,7 +240,7 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             "The URL combines multiple phishing-related keywords in the same address.",
         )
 
-    if len(host_labels) >= 4:
+    if len(host_labels) >= 4 and not _is_trusted_tld(host_labels):
         add_signal(
             signals,
             "many_subdomains",
@@ -187,7 +249,7 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             "The URL has many subdomains, which can be used to mimic trusted brands.",
         )
 
-    if len(host_labels) >= 5:
+    if len(host_labels) >= 5 and not _is_trusted_tld(host_labels):
         add_signal(
             signals,
             "deep_subdomain_chain",
@@ -219,7 +281,7 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             signals,
             "insecure_http",
             "medium",
-            10,
+            15,
             "The URL does not use HTTPS.",
         )
 
@@ -230,6 +292,18 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             "high",
             10,
             "The URL mixes an insecure protocol with several suspicious phishing terms.",
+        )
+
+    path = parsed_url.path.lower()
+    if path.endswith((".php", ".asp", ".aspx", ".jsp")) and any(
+        kw in lowered_url for kw in ("login", "verify", "account", "update", "secure", "admin", "confirm")
+    ):
+        add_signal(
+            signals,
+            "suspicious_script_file",
+            "medium",
+            15,
+            "The URL targets a server-side script with suspicious keywords, common in phishing kits.",
         )
 
     if not signals:
