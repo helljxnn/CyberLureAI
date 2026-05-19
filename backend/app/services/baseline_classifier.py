@@ -16,6 +16,7 @@ from backend.app.services.calibration import (
     CalibrationResult,
     build_feature_rows,
     evaluate_default_calibration,
+    evaluate_external_calibration,
     write_rows_csv,
 )
 
@@ -478,6 +479,16 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Train and evaluate the experimental baseline classifier.",
     )
     parser.add_argument(
+        "--external",
+        action="store_true",
+        help="Use external real-world samples instead of hand-crafted ones.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Use both hand-crafted and external samples.",
+    )
+    parser.add_argument(
         "--folds",
         type=int,
         default=DEFAULT_FOLDS,
@@ -534,8 +545,21 @@ def _print_evaluation(evaluation: BaselineEvaluation) -> None:
 
 def main() -> None:
     args = _build_parser().parse_args()
+
+    if args.all:
+        calibration_results = evaluate_default_calibration() + evaluate_external_calibration()
+    elif args.external:
+        calibration_results = evaluate_external_calibration()
+    else:
+        calibration_results = evaluate_default_calibration()
+
+    if not calibration_results:
+        print("No calibration examples found.")
+        return
+
     unified_evaluation, separate_evaluation = compare_baseline_strategies(
-        folds=args.folds
+        results=calibration_results,
+        folds=args.folds,
     )
 
     _print_evaluation(unified_evaluation)
@@ -562,12 +586,13 @@ def main() -> None:
 
     if args.model_path:
         args.model_path.parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(fit_baseline_classifier(), args.model_path)
+        bundle = fit_baseline_classifier(results=calibration_results)
+        joblib.dump(bundle, args.model_path)
         print(f"Wrote trained baseline model: {args.model_path}")
 
     if args.separate_model_dir:
         args.separate_model_dir.mkdir(parents=True, exist_ok=True)
-        bundle = fit_separate_baseline_classifiers()
+        bundle = fit_separate_baseline_classifiers(results=calibration_results)
         for sample_type, model in bundle["models"].items():
             model_path = args.separate_model_dir / f"{sample_type}_baseline_model.joblib"
             joblib.dump(
