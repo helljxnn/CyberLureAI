@@ -5,6 +5,22 @@
 
 ---
 
+## Actualización de Estado — 19 de mayo de 2026
+
+El foco inmediato queda en **MVP demo local**, no despliegue público. El código ya tiene resueltos los bloqueantes principales detectados en la Fase 1:
+
+- `/analyze/malware` está activo y cubierto por tests de API.
+- La lógica de respuesta de malware vive en `backend/app/services/malware_response_builder.py`, separada del router.
+- El baseline experimental de URL/mensaje se precarga en startup con `warm_up_baseline_model()`.
+- `slowapi` aplica rate limiting configurable con `RATE_LIMIT`.
+- El frontend reutiliza correctamente entradas de historial para URL, mensaje y malware.
+- `SERVE_FRONTEND` permite servir `frontend/dist/` desde FastAPI si más adelante se prueba modo producción.
+- La validación local actual pasa con `.\.venv\Scripts\python.exe -m pytest` y `cd frontend && npm run -s build`.
+
+La siguiente prioridad práctica es mantener la demo repetible: documentación alineada, checklist manual, y smoke check de endpoints con el backend levantado.
+
+---
+
 ## 1. Diagnóstico Rápido
 
 ### ✅ Lo que está bien construido
@@ -240,10 +256,10 @@ Actualmente el análisis de malware requiere pegar JSON con features PE. El sigu
 
 ```
 ESTADO ACTUAL: Sprint 2 completado, Fase 2.1 (datos reales) COMPLETADA May 18 2026
-BLOQUEANTES:   3 resueltos (model warm-up, lógica malware en router, history bug)
-SIGUIENTE MVP: Fase 2.3-2.5: rate limiting (ya hecho), build producción, API key
+BLOQUEANTES:   Resueltos (model warm-up, lógica malware separada, history bug, endpoint malware, rate limiting)
+SIGUIENTE MVP: Demo local repetible: docs, checklist, smoke check y validación pytest/build
 CALIBRACIÓN:   Hand-crafted: 100% → Real-world: 51% heurístico / 73% baseline ML
-TIMELINE:      ~1 semana para MVP demo-able con modelo re-entrenado
+TIMELINE:      Demo local lista tras mantener documentación y verificación sincronizadas
 ```
 
-El proyecto tiene una arquitectura bien pensada y código limpio. Los riesgos principales no son técnicos sino de **calidad del dato** y **preparación para producción**. La prioridad inmediata es la Fase 1 (3-4h de trabajo) y luego expandir el dataset antes de invertir más en el modelo.
+El proyecto tiene una arquitectura bien pensada y código limpio. Los riesgos principales ya no están en la estructura base del MVP local, sino en **calidad del dato**, **trazabilidad de modelos** y **preparación para producción**. Para la siguiente demo, la prioridad es conservar un flujo local verificable con tests, build, smoke check y checklist manual antes de invertir más en despliegue público o reemplazo del heurístico.
