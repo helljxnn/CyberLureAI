@@ -12,7 +12,7 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -35,6 +35,70 @@ class SmokeCase:
     payload: dict[str, Any] | None
     expected_status: int
     expected_fields: tuple[str, ...]
+    unexpected_fields: tuple[str, ...] = ()
+    validator: Callable[[dict[str, Any]], None] | None = None
+
+
+def require_value(payload: dict[str, Any], field: str, expected: Any, case_name: str) -> None:
+    actual = payload.get(field)
+    if actual != expected:
+        raise AssertionError(f"{case_name}: expected {field}={expected!r}, got {actual!r}")
+
+
+def require_risky_analysis(payload: dict[str, Any], case_name: str) -> None:
+    require_value(payload, "verdict", "suspicious", case_name)
+    if payload.get("risk_level") not in {"medium", "high"}:
+        raise AssertionError(
+            f"{case_name}: expected medium/high risk_level, got {payload.get('risk_level')!r}"
+        )
+    if not isinstance(payload.get("risk_score"), int) or payload["risk_score"] < 50:
+        raise AssertionError(
+            f"{case_name}: expected risk_score >= 50, got {payload.get('risk_score')!r}"
+        )
+    if payload.get("experimental_model") is None:
+        raise AssertionError(f"{case_name}: expected experimental_model comparison context.")
+
+
+def validate_root(payload: dict[str, Any]) -> None:
+    if payload.get("status") not in {"ok", "running"}:
+        raise AssertionError(f"root: expected status ok/running, got {payload.get('status')!r}")
+    endpoints = payload.get("available_endpoints")
+    expected = {"/health", "/analyze/url", "/analyze/message", "/analyze/malware"}
+    if not isinstance(endpoints, list) or not expected.issubset(set(endpoints)):
+        raise AssertionError("root: available_endpoints does not include the demo API contract.")
+
+
+def validate_health(payload: dict[str, Any]) -> None:
+    require_value(payload, "status", "ok", "health")
+
+
+def validate_url_analysis(payload: dict[str, Any]) -> None:
+    require_risky_analysis(payload, "url analysis")
+
+
+def validate_message_analysis(payload: dict[str, Any]) -> None:
+    require_risky_analysis(payload, "message analysis")
+
+
+def validate_malware_analysis(payload: dict[str, Any]) -> None:
+    if payload.get("experimental_model") is not None:
+        raise AssertionError("malware analysis: experimental_model must stay null.")
+    if payload.get("label") not in {"benign", "malware"}:
+        raise AssertionError(
+            f"malware analysis: expected label benign/malware, got {payload.get('label')!r}"
+        )
+    if not isinstance(payload.get("is_malware"), bool):
+        raise AssertionError("malware analysis: is_malware must be a boolean.")
+    if not isinstance(payload.get("confidence"), (int, float)):
+        raise AssertionError("malware analysis: confidence must be numeric.")
+    probabilities = payload.get("probabilities")
+    if not isinstance(probabilities, dict) or {"benign", "malware"} - set(probabilities):
+        raise AssertionError("malware analysis: probabilities must include benign and malware.")
+    if payload.get("risk_level") not in {"low", "medium", "high"}:
+        raise AssertionError(
+            "malware analysis: expected low/medium/high risk_level, "
+            f"got {payload.get('risk_level')!r}"
+        )
 
 
 CASES = (
@@ -45,6 +109,7 @@ CASES = (
         payload=None,
         expected_status=200,
         expected_fields=("name", "version", "status", "available_endpoints"),
+        validator=validate_root,
     ),
     SmokeCase(
         name="health",
@@ -53,6 +118,7 @@ CASES = (
         payload=None,
         expected_status=200,
         expected_fields=("status", "service"),
+        validator=validate_health,
     ),
     SmokeCase(
         name="url analysis",
@@ -69,6 +135,7 @@ CASES = (
             "signals",
             "experimental_model",
         ),
+        validator=validate_url_analysis,
     ),
     SmokeCase(
         name="message analysis",
@@ -90,6 +157,7 @@ CASES = (
             "signals",
             "experimental_model",
         ),
+        validator=validate_message_analysis,
     ),
     SmokeCase(
         name="malware analysis",
@@ -108,6 +176,7 @@ CASES = (
             "reasons",
             "signals",
         ),
+        validator=validate_malware_analysis,
     ),
 )
 
@@ -151,6 +220,13 @@ def validate_case(base_url: str, case: SmokeCase) -> None:
     missing = [field for field in case.expected_fields if field not in payload]
     if missing:
         raise AssertionError(f"{case.name}: missing fields: {', '.join(missing)}")
+
+    unexpected = [field for field in case.unexpected_fields if field in payload]
+    if unexpected:
+        raise AssertionError(f"{case.name}: unexpected fields: {', '.join(unexpected)}")
+
+    if case.validator is not None:
+        case.validator(payload)
 
     print(f"[ok] {case.name}")
 
