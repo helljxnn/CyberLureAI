@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 
+from backend.app.schemas.feedback import FeedbackRequest, FeedbackResponse
+from backend.app.services.feedback_service import save_feedback
+from backend.app.services.pe_extractor import extract_pe_features
 from backend.app.schemas.malware_analysis import (
     MalwareAnalysisRequest,
     MalwareAnalysisResponse,
@@ -68,3 +71,41 @@ def analyze_suspicious_file(payload: MalwareAnalysisRequest) -> MalwareAnalysisR
         reasons=payload_data.reasons,
         signals=payload_data.signals,
     )
+
+
+@router.post("/malware/upload", response_model=MalwareAnalysisResponse)
+async def analyze_malware_file(file: UploadFile = File(...)) -> MalwareAnalysisResponse:
+    try:
+        content = await file.read()
+        features = extract_pe_features(content)
+        verdict = analyze_malware_features(features)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Error analizando el archivo") from exc
+
+    payload_data = build_malware_analysis_response(verdict)
+    return MalwareAnalysisResponse(
+        is_malware=payload_data.is_malware,
+        label=payload_data.label,
+        confidence=payload_data.confidence,
+        probabilities=payload_data.probabilities,
+        risk_level=payload_data.risk_level,
+        risk_score=payload_data.risk_score,
+        verdict=payload_data.verdict,
+        explanation=payload_data.explanation,
+        recommended_action=payload_data.recommended_action,
+        reasons=payload_data.reasons,
+        signals=payload_data.signals,
+    )
+
+
+@router.post("/feedback", response_model=FeedbackResponse)
+def submit_feedback(payload: FeedbackRequest) -> FeedbackResponse:
+    try:
+        save_feedback(payload)
+        return FeedbackResponse(status="success", message="Feedback recibido y guardado con éxito.")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Error guardando feedback") from exc

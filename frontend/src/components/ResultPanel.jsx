@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   formatConfidence,
   formatSignalCode,
@@ -7,7 +8,9 @@ import {
   getVerdictMeaning,
 } from "../config/analysisContent";
 
-export default function ResultPanel({ title, state }) {
+export default function ResultPanel({ title, state, onFeedback }) {
+  const [feedbackGiven, setFeedbackGiven] = useState(null);
+
   if (state.kind === "empty") {
     return (
       <div className="result-panel empty-state" aria-live="polite">
@@ -32,7 +35,7 @@ export default function ResultPanel({ title, state }) {
         </div>
         <h3>{title}</h3>
         <p>{state.message}</p>
-        {state.details.length > 0 && (
+        {state.details && state.details.length > 0 && (
           <ul>
             {state.details.map((detail) => (
               <li key={detail}>{detail}</li>
@@ -50,6 +53,13 @@ export default function ResultPanel({ title, state }) {
   const checklist = getSafeChecklist(state.data.verdict);
   const experimentalModel = state.data.experimental_model;
   const modelDisagrees = experimentalModel?.agrees_with_heuristic === false;
+
+  const handleFeedback = (type) => {
+    setFeedbackGiven(type);
+    if (onFeedback) {
+      onFeedback(type);
+    }
+  };
 
   return (
     <div className="result-panel result-success" data-risk={state.data.risk_level} aria-live="polite">
@@ -148,6 +158,24 @@ export default function ResultPanel({ title, state }) {
           <li key={reason}>{reason}</li>
         ))}
       </ul>
+
+      <div className="feedback-actions">
+        <span>¿Fue útil este análisis?</span>
+        <button 
+          className={`feedback-btn ${feedbackGiven === 'correct' ? 'active-correct' : ''}`}
+          onClick={() => handleFeedback('correct')}
+          disabled={feedbackGiven !== null}
+        >
+          👍 Sí, es correcto
+        </button>
+        <button 
+          className={`feedback-btn ${feedbackGiven === 'incorrect' ? 'active-incorrect' : ''}`}
+          onClick={() => handleFeedback('incorrect')}
+          disabled={feedbackGiven !== null}
+        >
+          👎 No, es incorrecto
+        </button>
+      </div>
     </div>
   );
 }

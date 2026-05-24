@@ -63,3 +63,33 @@ export function analyzeMalware(baseUrl, features, filename = null) {
     body: JSON.stringify(body),
   });
 }
+
+export async function analyzeMalwareUpload(baseUrl, file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${baseUrl.replace(/\/+$/, "")}/analyze/malware/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      JSON.stringify({
+        message: data.detail || "Error analizando el archivo",
+        details: [],
+      })
+    );
+  }
+
+  return data;
+}
+
+export function submitFeedback(baseUrl, feedbackData) {
+  return fetchJson(baseUrl, "/analyze/feedback", {
+    method: "POST",
+    body: JSON.stringify(feedbackData),
+  });
+}

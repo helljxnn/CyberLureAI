@@ -12,11 +12,12 @@ import {
   URL_EXAMPLES,
 } from "./config/analysisContent";
 import {
-  analyzeMalware,
+  analyzeMalwareUpload,
   analyzeMessage,
   analyzeUrl,
   checkApiConnection,
   parseAppError,
+  submitFeedback,
 } from "./services/apiClient";
 import {
   createHistoryEntry,
@@ -49,7 +50,7 @@ export default function App() {
   });
   const [urlInput, setUrlInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
-  const [malwareInput, setMalwareInput] = useState("");
+  const [malwareInput, setMalwareInput] = useState(null);
   const [urlResult, setUrlResult] = useState(INITIAL_URL_RESULT);
   const [messageResult, setMessageResult] = useState(INITIAL_MESSAGE_RESULT);
   const [malwareResult, setMalwareResult] = useState(INITIAL_MALWARE_RESULT);
@@ -142,33 +143,14 @@ export default function App() {
 
   async function handleMalwareSubmit(event) {
     event.preventDefault();
-    setMalwareResult({ kind: "loading", message: "Analyzing malware features..." });
+    if (!malwareInput) return;
 
-    let parsedFeatures;
-    try {
-      parsedFeatures = JSON.parse(malwareInput);
-    } catch {
-      setMalwareResult({
-        kind: "error",
-        message: "Invalid JSON. Paste a valid JSON object with PE header feature values.",
-        details: [],
-      });
-      return;
-    }
-
-    if (typeof parsedFeatures !== "object" || parsedFeatures === null || Array.isArray(parsedFeatures)) {
-      setMalwareResult({
-        kind: "error",
-        message: "Expected a JSON object with PE header feature names and values.",
-        details: [],
-      });
-      return;
-    }
+    setMalwareResult({ kind: "loading", message: "Analyzing malware file..." });
 
     try {
-      const data = await analyzeMalware(cleanBaseUrl, parsedFeatures);
+      const data = await analyzeMalwareUpload(cleanBaseUrl, malwareInput);
       setMalwareResult({ kind: "success", data });
-      addHistoryEntry("Malware", malwareInput.trim().substring(0, 80) + "...", data);
+      addHistoryEntry("Malware", malwareInput.name, data);
     } catch (error) {
       const parsed = parseAppError(error);
       setMalwareResult({
@@ -176,6 +158,19 @@ export default function App() {
         message: parsed.message,
         details: parsed.details,
       });
+    }
+  }
+
+  async function handleFeedback(sampleType, inputData, verdictGiven, userFeedback) {
+    try {
+      await submitFeedback(cleanBaseUrl, {
+        sample_type: sampleType,
+        input_data: String(inputData),
+        verdict_given: verdictGiven,
+        user_feedback: userFeedback
+      });
+    } catch (e) {
+      console.error("Failed to submit feedback", e);
     }
   }
 
@@ -220,7 +215,11 @@ export default function App() {
             onSubmit={handleUrlSubmit}
           />
 
-          <ResultPanel title="URL analysis failed" state={urlResult} />
+          <ResultPanel 
+            title="URL analysis failed" 
+            state={urlResult} 
+            onFeedback={(feedback) => handleFeedback("url", urlInput, urlResult.data?.verdict, feedback)} 
+          />
         </section>
 
         <section className="card analysis-card">
@@ -243,7 +242,11 @@ export default function App() {
             onSubmit={handleMessageSubmit}
           />
 
-          <ResultPanel title="Message analysis failed" state={messageResult} />
+          <ResultPanel 
+            title="Message analysis failed" 
+            state={messageResult} 
+            onFeedback={(feedback) => handleFeedback("message", messageInput, messageResult.data?.verdict, feedback)} 
+          />
         </section>
 
         <section className="card analysis-card">
@@ -254,19 +257,23 @@ export default function App() {
 
           <AnalysisForm
             actionLabel="Analyze file"
-            examples={MALWARE_EXAMPLES}
+            examples={[]}
             inputId="malware-input"
-            inputMode="textarea"
+            inputMode="file"
             isLoading={isMalwareLoading}
-            label="Paste PE header features (JSON)"
+            label="Upload a binary (.exe, .dll)"
             loadingLabel="Analyzing..."
-            placeholder='{ "e_cblp": 144, "e_cp": 3, "packer_type": "NoPacker", ... }'
+            placeholder=""
             value={malwareInput}
             onChange={setMalwareInput}
             onSubmit={handleMalwareSubmit}
           />
 
-          <ResultPanel title="Malware analysis failed" state={malwareResult} />
+          <ResultPanel 
+            title="Malware analysis failed" 
+            state={malwareResult} 
+            onFeedback={(feedback) => handleFeedback("malware", malwareInput?.name || "unknown", malwareResult.data?.verdict, feedback)} 
+          />
         </section>
 
         <EducationSection />
