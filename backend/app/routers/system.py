@@ -31,3 +31,37 @@ def health_check() -> dict[str, str]:
         "status": "ok",
         "service": settings.api_title,
     }
+
+
+@router.get("/system/metrics")
+def get_system_metrics() -> dict[str, object]:
+    import csv
+    from pathlib import Path
+    
+    project_root = Path(__file__).resolve().parents[3]
+    reports_dir = project_root / "reports"
+    
+    sample_metrics_file = reports_dir / "baseline_sample_type_metrics_external.csv"
+    if not sample_metrics_file.exists():
+        sample_metrics_file = reports_dir / "baseline_sample_type_metrics.csv"
+        
+    class_metrics_file = reports_dir / "baseline_class_metrics_external.csv"
+    if not class_metrics_file.exists():
+        class_metrics_file = reports_dir / "baseline_class_metrics.csv"
+        
+    metrics = {
+        "sample_type": [],
+        "class_metrics": []
+    }
+    
+    if sample_metrics_file.exists():
+        with open(sample_metrics_file, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            metrics["sample_type"] = [row for row in reader]
+            
+    if class_metrics_file.exists():
+        with open(class_metrics_file, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            metrics["class_metrics"] = [row for row in reader]
+            
+    return metrics
