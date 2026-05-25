@@ -5,6 +5,7 @@ import ApiConnectionPanel from "./components/ApiConnectionPanel";
 import EducationSection from "./components/EducationSection";
 import HistoryPanel from "./components/HistoryPanel";
 import ResultPanel from "./components/ResultPanel";
+import Dashboard from "./components/Dashboard";
 import {
   DEFAULT_API_URL,
   MALWARE_EXAMPLES,
@@ -54,6 +55,7 @@ export default function App() {
   const [urlResult, setUrlResult] = useState(INITIAL_URL_RESULT);
   const [messageResult, setMessageResult] = useState(INITIAL_MESSAGE_RESULT);
   const [malwareResult, setMalwareResult] = useState(INITIAL_MALWARE_RESULT);
+  const [currentView, setCurrentView] = useState("analyzer");
 
   const cleanBaseUrl = useMemo(() => apiBaseUrl.trim().replace(/\/+$/, ""), [apiBaseUrl]);
   const isUrlLoading = urlResult.kind === "loading";
@@ -194,8 +196,29 @@ export default function App() {
         />
       </header>
 
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
+        <button 
+          className={currentView === "analyzer" ? "primary-button" : "ghost-button"}
+          onClick={() => setCurrentView("analyzer")}
+        >
+          🔍 Analizador
+        </button>
+        <button 
+          className={currentView === "dashboard" ? "primary-button" : "ghost-button"}
+          onClick={() => setCurrentView("dashboard")}
+        >
+          📊 Dashboard ML
+        </button>
+      </div>
+
       <main className="content-grid">
-        <section className="card analysis-card">
+        {currentView === "dashboard" ? (
+          <div style={{ gridColumn: "span 3" }}>
+            <Dashboard apiBaseUrl={cleanBaseUrl} />
+          </div>
+        ) : (
+          <>
+            <section className="card analysis-card">
           <div className="card-header">
             <p className="section-kicker">Analyze a link</p>
             <h2>Suspicious URL review</h2>
@@ -283,6 +306,8 @@ export default function App() {
           onClearHistory={clearHistory}
           onUseHistoryEntry={useHistoryEntry}
         />
+        </>
+        )}
       </main>
     </div>
   );

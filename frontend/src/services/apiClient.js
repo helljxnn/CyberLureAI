@@ -93,3 +93,7 @@ export function submitFeedback(baseUrl, feedbackData) {
     body: JSON.stringify(feedbackData),
   });
 }
+
+export function fetchSystemMetrics(baseUrl) {
+  return fetchJson(baseUrl, "/system/metrics");
+}
