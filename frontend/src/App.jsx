@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 
 import AnalysisForm from "./components/AnalysisForm";
 import ApiConnectionPanel from "./components/ApiConnectionPanel";
 import EducationSection from "./components/EducationSection";
 import HistoryPanel from "./components/HistoryPanel";
 import ResultPanel from "./components/ResultPanel";
-import Dashboard from "./components/Dashboard";
+
+const Dashboard = lazy(() => import("./components/Dashboard"));
 import {
   DEFAULT_API_URL,
   MALWARE_EXAMPLES,
@@ -214,7 +215,9 @@ export default function App() {
       <main className="content-grid">
         {currentView === "dashboard" ? (
           <div style={{ gridColumn: "span 3" }}>
-            <Dashboard apiBaseUrl={cleanBaseUrl} />
+            <Suspense fallback={<div className="card loading-state">Loading dashboard...</div>}>
+              <Dashboard apiBaseUrl={cleanBaseUrl} />
+            </Suspense>
           </div>
         ) : (
           <>

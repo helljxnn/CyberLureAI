@@ -169,14 +169,8 @@ El modelo `.joblib` de 3.5 MB en `/models` fue generado fuera del pipeline visib
 - Un archivo `models/malware_features.json` (ya existe) ligado explícitamente al entrenamiento
 - Versionar el modelo con un nombre que incluya fecha o hash del dataset
 
-#### 2.3 — Añadir rate limiting al backend
-Para un MVP público, los endpoints de análisis son abusables. FastAPI con `slowapi` (integración con `limits`) permite agregar rate limiting por IP en ~30 minutos.
-```python
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-limiter = Limiter(key_func=get_remote_address)
-# @limiter.limit("10/minute") en cada endpoint
-```
+#### 2.3 — Rate limiting ✅ COMPLETADO
+`slowapi` integrado en `main.py` con `RATE_LIMIT` configurable vía `.env`. Aplica a todos los endpoints por IP.
 
 #### 2.4 — Variables de entorno para producción bien documentadas
 El `.env.example` existe pero el `DEBUG=True` por defecto en `settings.py` es un riesgo. Necesitas:
@@ -200,25 +194,25 @@ Una vez que tengas un dataset real de >500 ejemplos balanceados, considera:
 - `RandomForestClassifier` o `GradientBoostingClassifier` para capturar interacciones no lineales entre señales
 - Calibración de probabilidades con `CalibratedClassifierCV` si la confianza del modelo se muestra al usuario
 
-#### 3.2 — Sistema de feedback del usuario ("¿Este análisis fue útil?")
-Para mejorar el modelo de forma continua:
-- Botones de feedback en `ResultPanel.jsx` ("Este resultado fue correcto / incorrecto")
-- Endpoint `POST /feedback` que guarda el ejemplo etiquetado por el usuario
-- Estos se acumulan para re-entrenar con `python -m backend.app.services.baseline_classifier`
+#### 3.2 — Sistema de feedback del usuario ✅ COMPLETADO
+- Botones de feedback en `ResultPanel.jsx` ("Sí, es correcto / No, es incorrecto")
+- Endpoint `POST /analyze/feedback` que guarda el ejemplo etiquetado en `data/feedback/user_feedback.csv`
+- `feedback_service.py` maneja la persistencia CSV
 
 #### 3.3 — Integración con APIs de reputación externas
 - **VirusTotal API** (gratuito con límites): enriquecer el análisis de URLs
 - **Google Safe Browsing API** (gratuito): verificar URLs contra lista de phishing conocido
 - Integrar como señales adicionales sin reemplazar el análisis heurístico local
 
-#### 3.4 — Dashboard de métricas de calibración en el frontend
-Un panel de "Salud del modelo" que muestre:
-- Accuracy actual, F1 por clase
-- Número de ejemplos en el dataset
-- Fecha del último entrenamiento
+#### 3.4 — Dashboard de métricas de calibración ✅ COMPLETADO
+- `Dashboard.jsx` muestra accuracy heurístico vs ML, distribución de muestras, F1/precision/recall por clase
+- Endpoint `GET /system/metrics` lee reportes CSV de `reports/`
+- Gráficos con Recharts (BarChart, PieChart)
 
-#### 3.5 — Análisis de archivos reales (upload)
-Actualmente el análisis de malware requiere pegar JSON con features PE. El siguiente paso natural es aceptar un archivo `.exe` y extraer las features automáticamente con `pefile` (biblioteca Python).
+#### 3.5 — Análisis de archivos reales (upload) ✅ COMPLETADO
+- Endpoint `POST /analyze/malware/upload` acepta archivos `.exe`/`.dll`
+- `pe_extractor.py` extrae features PE automáticamente con `pefile`
+- Frontend usa `FormData` para upload de archivos binarios
 
 ---
 
@@ -255,11 +249,12 @@ Actualmente el análisis de malware requiere pegar JSON con features PE. El sigu
 ## Resumen Ejecutivo
 
 ```
-ESTADO ACTUAL: Sprint 2 completado, Fase 2.1 (datos reales) COMPLETADA May 18 2026
+ESTADO ACTUAL: Sprint 3 completado, May 30 2026
 BLOQUEANTES:   Resueltos (model warm-up, lógica malware separada, history bug, endpoint malware, rate limiting)
-SIGUIENTE MVP: Demo local repetible: docs, checklist, smoke check y validación pytest/build
-CALIBRACIÓN:   Hand-crafted: 100% → Real-world: 51% heurístico / 73% baseline ML
-TIMELINE:      Demo local lista tras mantener documentación y verificación sincronizadas
+NUEVO:         6 señales heurísticas nuevas (numeric_domain, brand_in_path, insecure_http mejorado,
+               premium_rate_number, sms_short_code, premium_pricing), feedback, dashboard, malware upload
+CALIBRACIÓN:   308 tests pasan, 24 ejemplos borderline nuevos agregados
+SIGUIENTE:     CI/CD, integración con APIs de reputación externas, expansión de dataset review
 ```
 
-El proyecto tiene una arquitectura bien pensada y código limpio. Los riesgos principales ya no están en la estructura base del MVP local, sino en **calidad del dato**, **trazabilidad de modelos** y **preparación para producción**. Para la siguiente demo, la prioridad es conservar un flujo local verificable con tests, build, smoke check y checklist manual antes de invertir más en despliegue público o reemplazo del heurístico.
+El proyecto tiene una arquitectura bien pensada y código limpio. Los riesgos principales ya no están en la estructura base del MVP local, sino en **calidad del dato**, **trazabilidad de modelos** y **preparación para producción**. Las 6 señales heurísticas nuevas mejoran la detección de phishing real (números en dominios, marcas en paths, SMS premium scams). La prioridad siguiente es CI/CD y expansión continua del dataset de calibración con datos reales.

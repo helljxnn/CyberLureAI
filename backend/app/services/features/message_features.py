@@ -200,6 +200,13 @@ SHORTENER_DOMAINS = (
 )
 URL_PATTERN = re.compile(r"(?:https?://|www\.)[^\s]+", re.IGNORECASE)
 ONE_TIME_CODE_PATTERN = re.compile(r"\b\d{4,8}\b")
+PREMIUM_RATE_PATTERN = re.compile(r"\b09\d{2}[\d\s-]{4,}\b|\b087[01][\d\s-]{5,}\b|\b084[345][\d\s-]{5,}\b|\b070\d{2}[\d\s-]{4,}\b")
+SMS_SHORT_CODE_PATTERN = re.compile(
+    r"\b(?:text|txt|send|reply|envia|enviar)\s+\w+\s+(?:to|al|a)\s+\d{5,6}\b", re.IGNORECASE
+)
+PREMIUM_PRICING_PATTERN = re.compile(
+    r"\b\d+p\b|\bppm\b|\bp/min\b|\bper min\b|\b\d+p per\b", re.IGNORECASE
+)
 
 
 def _normalize_for_matching(text: str) -> str:
@@ -293,6 +300,33 @@ def extract_message_signals(message: str) -> list[AnalysisSignal]:
             "low",
             10,
             "The message uses aggressive punctuation or promotional symbols.",
+        )
+
+    if PREMIUM_RATE_PATTERN.search(message):
+        add_signal(
+            signals,
+            "premium_rate_number",
+            "high",
+            25,
+            "The message includes a premium-rate phone number commonly used in scams.",
+        )
+
+    if SMS_SHORT_CODE_PATTERN.search(message):
+        add_signal(
+            signals,
+            "sms_short_code",
+            "high",
+            20,
+            "The message asks you to text a keyword to a short code, a classic premium SMS scam pattern.",
+        )
+
+    if PREMIUM_PRICING_PATTERN.search(message):
+        add_signal(
+            signals,
+            "premium_pricing",
+            "medium",
+            15,
+            "The message mentions per-minute or per-message charges, indicating a premium-rate service.",
         )
 
     if not signals:

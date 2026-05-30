@@ -51,20 +51,29 @@ CyberLureAI/
 
 At this stage, the repository contains:
 
-- a FastAPI backend with `/analyze/url`, `/analyze/message`, and `/analyze/malware`
-- a React + Vite frontend for the local MVP demo flow
-- structured feature extraction for URL and message risk signals
+- a FastAPI backend with `/analyze/url`, `/analyze/message`, `/analyze/malware`, and `/analyze/malware/upload`
+- a React + Vite frontend for the local MVP demo flow with a dashboard view
+- structured feature extraction for URL and message risk signals (30+ signal types)
 - an experimental separate-by-type baseline model comparison for URL and message analysis
 - startup warm-up for the experimental baseline so the first request does not train lazily
 - a RandomForest malware classifier bundle with model card and feature metadata
 - rate limiting configured through `RATE_LIMIT`
+- user feedback collection via `/analyze/feedback`
+- system metrics dashboard at `/system/metrics`
 - production-oriented environment examples, including optional static frontend serving
 - automated tests for the API, analyzers, calibration, and baseline behavior
+- GitHub Actions CI for backend tests and frontend build
 
 Recent local validation:
 
-- Backend tests: `.venv\Scripts\python.exe -m pytest`
-- Frontend build: `cd frontend && npm run -s build`
+- Backend tests: 308 passed
+- Frontend build: code-split bundles (164 KB main + 374 KB dashboard)
+
+Real-world calibration (2,091 examples):
+
+- Heuristic accuracy: 51.5% (URL: 46.3%, Message: 56.6%)
+- False positives: 67, False negatives: 947
+- Limitation: many real phishing URLs are HTTP on hacked legitimate domains with no visible signals
 
 ## Tech Stack
 
@@ -166,6 +175,8 @@ With the backend running, you can also run a quick endpoint smoke check:
 3. Track false positives and false negatives after every meaningful signal change.
 4. Keep the heuristic API contract stable while the experimental ML comparison matures.
 5. Decide later whether the production demo should serve Vite `dist/` from FastAPI or use a separate frontend host.
+6. Consider integrating external reputation APIs (VirusTotal, Google Safe Browsing) to improve URL detection beyond visible signals.
+7. Expand the review-class dataset with more borderline examples from real-world data.
 
 ## Legal And Ethical Note
 

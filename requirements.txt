@@ -19,5 +19,5 @@ jupyterlab==4.4.9
 # Testing
 pytest==8.3.3
 
-pefile
-python-multipart
+pefile==2024.8.26
+python-multipart==0.0.20
