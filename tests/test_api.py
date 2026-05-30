@@ -219,3 +219,74 @@ def test_malware_analysis_endpoint_rejects_invalid_features() -> None:
 
     assert response.status_code == 422
     assert response.json()["error"] == "validation_error"
+
+
+def _build_minimal_pe_bytes() -> bytes:
+    import struct
+
+    dos_header = b"MZ" + b"\x00" * 58 + struct.pack("<I", 64)
+    pe_sig = b"PE\x00\x00"
+    coff_header = struct.pack(
+        "<HHIIIHH",
+        0x14C,
+        1,
+        0,
+        0,
+        0,
+        0xE0,
+        0x102,
+    )
+    opt_header = struct.pack("<HBBIIIII", 0x10B, 1, 0, 0x200, 0, 0, 0x1000, 0x1000)
+    opt_header += struct.pack("<I", 0x400000)
+    opt_header += struct.pack("<II", 0x1000, 0x200)
+    opt_header += struct.pack("<HHHHHH", 4, 0, 0, 0, 4, 0)
+    opt_header += struct.pack("<III", 0x3000, 0x200, 0)
+    opt_header += struct.pack("<HH", 3, 0x8160)
+    opt_header += struct.pack("<IIII", 0x100000, 0x1000, 0x100000, 0x1000)
+    opt_header += struct.pack("<II", 0, 16)
+    opt_header += b"\x00" * (16 * 8)
+    section_header = b".text\x00\x00\x00"
+    section_header += struct.pack("<IIII", 0x200, 0x1000, 0x200, 0x200)
+    section_header += struct.pack("<IIHHI", 0, 0, 0, 0, 0x60000020)
+    file_data = dos_header + pe_sig + coff_header + opt_header + section_header
+    file_data += b"\x00" * (0x200 - len(file_data))
+    file_data += b"\xCC" * 0x200
+    return file_data
+
+
+def test_malware_upload_endpoint_returns_expected_shape() -> None:
+    pe_bytes = _build_minimal_pe_bytes()
+
+    response = client.post(
+        "/analyze/malware/upload",
+        files={"file": ("test.exe", pe_bytes, "application/octet-stream")},
+    )
+
+    body = response.json()
+
+    assert response.status_code == 200
+    assert isinstance(body["is_malware"], bool)
+    assert isinstance(body["label"], str)
+    assert isinstance(body["confidence"], (int, float))
+    assert 0 <= body["confidence"] <= 1
+    assert isinstance(body["probabilities"], dict)
+    assert "benign" in body["probabilities"]
+    assert "malware" in body["probabilities"]
+    assert body["risk_level"] in {"low", "medium", "high"}
+    assert isinstance(body["risk_score"], int)
+    assert body["verdict"] in {"likely_safe", "review", "suspicious"}
+    assert isinstance(body["explanation"], str)
+    assert isinstance(body["recommended_action"], str)
+    assert isinstance(body["reasons"], list)
+    assert isinstance(body["signals"], list)
+    assert body["experimental_model"] is None
+
+
+def test_malware_upload_endpoint_rejects_non_pe_file() -> None:
+    response = client.post(
+        "/analyze/malware/upload",
+        files={"file": ("test.txt", b"not a PE file", "text/plain")},
+    )
+
+    assert response.status_code == 400
+    assert "Invalid PE file format" in response.json()["detail"]

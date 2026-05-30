@@ -153,3 +153,14 @@ suspicious_whatsapp_lookalike_security_confirm,https://whats4pp.example.net/secu
 suspicious_instagram_lookalike_login_update,https://instagrarn.example.org/login-update-verify,suspicious,brand_lookalike_domain
 suspicious_google_deep_lookalike_chain,https://login.g00gle.account.verify.example.com,suspicious,brand_lookalike_domain
 suspicious_microsoft_http_lookalike_update,http://rnicrosoft.example.net/update-account-login,suspicious,brand_lookalike_domain
+review_numeric_id_legit,https://portal12345.example.com/account,review,numeric_domain_label
+review_numeric_ticket_id,http://support98765.example.org/ticket/4421,review,numeric_domain_label
+review_numeric_member_portal,http://member20231.example.net/profile,review,numeric_domain_label
+review_brand_in_path_docs,http://example.com/docs/paypal-integration,review,brand_in_path
+review_brand_in_path_blog,https://example.org/blog/amazon-services-guide,review,brand_in_path
+review_brand_in_path_help,http://example.net/help/microsoft-setup,review,brand_in_path
+suspicious_numeric_phishing_id,http://id90014.agency-manager-support.com/login,suspicious,numeric_domain_label
+suspicious_numeric_payment_host,http://pay765444403.tk/verify,suspicious,numeric_domain_label
+suspicious_brand_in_path_phish,http://example.com/www.wellsfargo.com/login.php,suspicious,brand_in_path
+suspicious_brand_in_path_login,http://example.org/paypal/secure-login.php,suspicious,brand_in_path
+suspicious_brand_in_path_apple,http://example.net/apple/account-verify,suspicious,brand_in_path

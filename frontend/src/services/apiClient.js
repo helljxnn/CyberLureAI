@@ -53,17 +53,6 @@ export function analyzeMessage(baseUrl, message) {
   });
 }
 
-export function analyzeMalware(baseUrl, features, filename = null) {
-  const body = { features };
-  if (filename) {
-    body.filename = filename;
-  }
-  return fetchJson(baseUrl, "/analyze/malware", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-}
-
 export async function analyzeMalwareUpload(baseUrl, file) {
   const formData = new FormData();
   formData.append("file", file);

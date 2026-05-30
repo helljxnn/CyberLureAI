@@ -1,3 +1,4 @@
+import re
 from ipaddress import ip_address
 from urllib.parse import urlparse
 
@@ -114,6 +115,20 @@ TRUSTED_TLDS = frozenset({
     "edu.mx",
     "gov.mx",
 })
+NUMERIC_LABEL_PATTERN = re.compile(r"\d{5,}")
+BRAND_IN_PATH_NAMES = (
+    "paypal",
+    "wellsfargo",
+    "amazon",
+    "apple",
+    "microsoft",
+    "google",
+    "facebook",
+    "instagram",
+    "netflix",
+    "whatsapp",
+    "bancolombia",
+)
 
 def _is_trusted_tld(host_labels: list[str]) -> bool:
     if len(host_labels) < 2:
@@ -277,11 +292,13 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
         )
 
     if parsed_url.scheme == "http":
+        is_trusted = _is_trusted_tld(host_labels) or root_domain in BRAND_TRUSTED_ROOTS.values()
+        http_score = 10 if is_trusted else 20
         add_signal(
             signals,
             "insecure_http",
             "medium",
-            15,
+            http_score,
             "The URL does not use HTTPS.",
         )
 
@@ -293,6 +310,28 @@ def extract_url_signals(url: str) -> list[AnalysisSignal]:
             10,
             "The URL mixes an insecure protocol with several suspicious phishing terms.",
         )
+
+    if any(NUMERIC_LABEL_PATTERN.search(label) for label in host_labels[:-1]):
+        add_signal(
+            signals,
+            "numeric_domain_label",
+            "medium",
+            20,
+            "The URL uses long numeric sequences in the domain, common in phishing infrastructure.",
+        )
+
+    path_lower = parsed_url.path.lower()
+    if root_domain not in BRAND_TRUSTED_ROOTS.values():
+        for brand in BRAND_IN_PATH_NAMES:
+            if brand in path_lower and brand not in normalized_hostname:
+                add_signal(
+                    signals,
+                    "brand_in_path",
+                    "high",
+                    30,
+                    f"The URL path references '{brand}' but the domain does not belong to that brand.",
+                )
+                break
 
     path = parsed_url.path.lower()
     if path.endswith((".php", ".asp", ".aspx", ".jsp")) and any(

@@ -91,3 +91,15 @@ review_codigo_entrega_es,Tu codigo 123456 para recoger el paquete vence al final
 review_verifica_soporte_es,Por favor verifica el contacto de soporte en https://example.com/contacto,review,sensitive_information_request
 suspicious_banco_bloqueado_es,Urgente: tu cuenta del banco fue bloqueada hoy. Verifica ahora en https://bit.ly/banco-ayuda,suspicious,account_restriction_threat
 suspicious_premio_codigo_es,Ganador!!! Reclama tu premio ahora en www.premio-centro.example con codigo 481920,suspicious,reward_lure
+review_premium_info_mention,For premium support call 0871 234 5678 or visit https://example.com/support during business hours.,review,premium_rate_number
+review_sms_service_notice,Text STOP to 84128 to unsubscribe from notifications at https://example.com/alerts,review,sms_short_code
+review_pricing_notice_mention,Standard rate 150p per message applies. Check details at https://example.com/rates,review,premium_pricing
+review_premium_contact_info,Call 0906 123 4567 for our premium helpline or see https://example.com/contact during office hours.,review,premium_rate_number
+review_sms_opt_out_notice,Reply STOP to 55678 to opt out of alerts. Details at https://example.com/preferences,review,sms_short_code
+review_per_minute_rate,Our support line is billed at 25p per min from landlines. See https://example.com/pricing for details.,review,premium_pricing
+suspicious_premium_rate_winner,Urgent! Call 09066612661 immediately to claim your 1000 CASH prize! Your account will be locked today!,suspicious,premium_rate_number
+suspicious_sms_short_code_prize,Urgent! Text WIN to 85023 now to claim your 150 gift voucher! Last chance! Your account is suspended!,suspicious,sms_short_code
+suspicious_premium_pricing_urgent,Urgent! Call 08715203652 now. Calls cost 150p per min. Your prize expires today! Your account is locked!,suspicious,premium_pricing
+suspicious_premium_rate_colombia_es,Urgente! Llama al 0906123456 inmediatamente para reclamar tu premio de 1000 euros! Tu cuenta sera bloqueada hoy!,suspicious,premium_rate_number
+suspicious_sms_short_code_es,Urgente! Envia GANAR al 85023 ahora para reclamar tu premio de 500 euros! Ultima oportunidad! Tu cuenta esta suspendida!,suspicious,sms_short_code
+suspicious_premium_pricing_free_scam,FREE entry! Text ENTER to 84128 NOW. 150p per msg. Urgent! Your account will be locked today! T&Cs apply.,suspicious,premium_pricing
